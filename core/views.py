@@ -23,6 +23,7 @@ def login_view(request):
 @login_required
 def pagina_inicial(request):
     quartos = Quarto.objects.all()
+
     return render(request, 'core/pagina_inicial.html', {'quartos': quartos})
 
 

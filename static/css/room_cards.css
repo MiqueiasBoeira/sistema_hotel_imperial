@@ -1,0 +1,44 @@
+.room-cards-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 20px;
+}
+
+.room-card {
+    background-color: #FFFFFF; /* Branco */
+    border: 1px solid #D4AF37; /* Dourado */
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 10px;
+    padding: 15px;
+    width: 250px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.room-card.available {
+    border-color: #4CAF50; /* Verde para quartos disponíveis */
+}
+
+.room-card.occupied {
+    border-color: #FF0000; /* Vermelho para quartos ocupados */
+}
+
+.room-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.room-title {
+    font-size: 1.5em;
+    color: #333333; /* Cinza escuro */
+    margin-bottom: 10px;
+}
+
+.room-status,
+.room-guest,
+.room-dates {
+    font-size: 1em;
+    color: #666666; /* Tom de cinza para textos */
+    margin: 5px 0;
+}
