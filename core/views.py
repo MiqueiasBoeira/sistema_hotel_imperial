@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import Quarto, Hospede, Checkin, Empresa, Checkout, Financeira, Reserva
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
+from .forms import CheckinForm
 
 
 
@@ -37,62 +38,18 @@ def pagina_inicial(request):
 @login_required
 def checkin_view(request):
     if request.method == 'POST':
-        nome_completo = request.POST['nome_completo']
-        cpf = request.POST['cpf']
-        email = request.POST['email']
-        telefone = request.POST['telefone']
-        endereco = request.POST['endereco']
-        motivo_viagem = request.POST['motivo_viagem']
-        diaria = request.POST['diaria']
-        num_dias = request.POST['num_dias']
-        data_checkin = request.POST['data_checkin']
-        companhia = request.POST['companhia']
-        numero_total_hospedes = request.POST['numero_total_hospedes']
-        quarto_id = request.POST['quarto_id']
-        tipo_cliente = request.POST['tipo_cliente']
-
-        empresa = None
-        if tipo_cliente == 'empresa':
-            nome_empresa = request.POST['nome_empresa']
-            cnpj = request.POST['cnpj']
-            empresa, created = Empresa.objects.get_or_create(
-                cnpj=cnpj,
-                defaults={'nome_empresa': nome_empresa}
-            )
-
-        hospede, created = Hospede.objects.get_or_create(
-            cpf=cpf,
-            defaults={
-                'nome_completo': nome_completo,
-                'email': email,
-                'telefone': telefone,
-                'endereco': endereco,
-                'tipo_cliente': tipo_cliente,
-                'empresa': empresa
-            }
-        )
-
-        checkin = Checkin.objects.create(
-            hospede=hospede,
-            quarto_id=quarto_id,
-            data_checkin=data_checkin,
-            diaria=diaria,
-            num_dias=num_dias,
-            companhia=companhia,
-            motivo_viagem=motivo_viagem,
-            numero_total_hospedes=numero_total_hospedes
-        )
-
-        quarto = Quarto.objects.get(id=quarto_id)
-        quarto.estado = 'ocupado'
-        quarto.save()
-
-        return redirect('pagina_inicial')
-
-    quartos = Quarto.objects.filter(estado='livre')
-    return render(request, 'core/checkin.html', {'quartos': quartos})
-
-
+        form = CheckinForm(request.POST)
+        if form.is_valid():
+            checkin = form.save()
+            quarto = checkin.quarto
+            quarto.estado = 'ocupado'
+            quarto.hospede = checkin.hospede
+            quarto.checkin = checkin
+            quarto.save()
+            return redirect('pagina_inicial')
+    else:
+        form = CheckinForm()
+    return render(request, 'core/checkin.html', {'form': form})
 
 @login_required
 def checkout_view(request):
