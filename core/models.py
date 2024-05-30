@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.utils import timezone
 class Empresa(models.Model):
     nome_empresa = models.CharField(max_length=255)
     cnpj = models.CharField(max_length=18, unique=True)
@@ -22,14 +22,17 @@ class Hospede(models.Model):
 class Quarto(models.Model):
     numero_quarto = models.CharField(max_length=10)
     estado = models.CharField(max_length=10, choices=[('livre', 'Livre'), ('ocupado', 'Ocupado'), ('reservado', 'Reservado')])
+    hospede = models.ForeignKey(Hospede, null=True, blank=True, on_delete=models.SET_NULL, related_name='quartos')
+    checkin = models.OneToOneField('Checkin', null=True, blank=True, on_delete=models.SET_NULL, related_name='quarto_checkin')
 
     def __str__(self):
         return self.numero_quarto
 
 class Checkin(models.Model):
-    hospede = models.ForeignKey(Hospede, on_delete=models.CASCADE)
-    quarto = models.ForeignKey(Quarto, on_delete=models.CASCADE)
-    data_checkin = models.DateField()
+    hospede = models.ForeignKey(Hospede, on_delete=models.CASCADE, related_name='checkins')
+    quarto = models.ForeignKey(Quarto, on_delete=models.CASCADE, related_name='checkins')
+    data_checkin = models.DateField(default=timezone.now)
+    data_checkout = models.DateField(default=timezone.now)
     diaria = models.DecimalField(max_digits=10, decimal_places=2)
     num_dias = models.IntegerField()
     companhia = models.CharField(max_length=255, null=True, blank=True)
@@ -40,7 +43,7 @@ class Checkin(models.Model):
         return f'{self.hospede.nome_completo} - Quarto {self.quarto.numero_quarto}'
 
 class Checkout(models.Model):
-    checkin = models.ForeignKey(Checkin, on_delete=models.CASCADE)
+    checkin = models.ForeignKey(Checkin, on_delete=models.CASCADE, related_name='checkouts')
     data_checkout = models.DateField()
     consumo = models.DecimalField(max_digits=10, decimal_places=2)
     observacoes = models.TextField(null=True, blank=True)
@@ -53,8 +56,8 @@ class Checkout(models.Model):
 class Reserva(models.Model):
     data_inicio = models.DateField()
     data_fim = models.DateField()
-    quarto = models.ForeignKey(Quarto, on_delete=models.CASCADE)
-    hospede = models.ForeignKey(Hospede, on_delete=models.SET_NULL, null=True, blank=True)
+    quarto = models.ForeignKey(Quarto, on_delete=models.CASCADE, related_name='reservas')
+    hospede = models.ForeignKey(Hospede, on_delete=models.SET_NULL, null=True, blank=True, related_name='reservas')
 
     def __str__(self):
         return f'Reserva Quarto {self.quarto.numero_quarto}'
