@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Página Inicial</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #f9d423, #ff4e50);
+            color: #333;
+        }
+        .quarto {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin: 10px;
+            border-radius: 5px;
+            background-color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <h1>Página Inicial</h1>
+    <div>
+        {% for quarto in quartos %}
+        <div class="quarto">
+            <h2>Quarto {{ quarto.numero_quarto }}</h2>
+            <p>Estado: {{ quarto.estado }}</p>
+        </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

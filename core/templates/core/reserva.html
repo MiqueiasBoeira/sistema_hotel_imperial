@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Registro de Reserva</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #f9d423, #ff4e50);
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .reserva-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .reserva-container h1 {
+            margin-bottom: 20px;
+        }
+        .reserva-container input,
+        .reserva-container select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .reserva-container button {
+            width: 100%;
+            padding: 10px;
+            background-color: #f9d423;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            font-size: 16px;
+        }
+        .message {
+            color: green;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="reserva-container">
+        <h1>Registro de Reserva</h1>
+        {% if messages %}
+            {% for message in messages %}
+                <p class="{{ message.tags }}">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+        <form method="post">
+            {% csrf_token %}
+            <input type="date" name="data_inicio" placeholder="Data de Início" required>
+            <input type="date" name="data_fim" placeholder="Data de Fim" required>
+            <select name="quarto_id" required>
+                <option value="">Selecione um Quarto</option>
+                {% for quarto in quartos %}
+                <option value="{{ quarto.id }}">{{ quarto.numero_quarto }}</option>
+                {% endfor %}
+            </select>
+            <select name="hospede_id">
+                <option value="">Selecione um Hóspede (opcional)</option>
+                {% for hospede in hospedes %}
+                <option value="{{ hospede.id }}">{{ hospede.nome_completo }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit">Registrar Reserva</button>
+        </form>
+    </div>
+</body>
+</html>

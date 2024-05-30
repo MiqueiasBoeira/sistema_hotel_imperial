@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Check-out</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #f9d423, #ff4e50);
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .checkout-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .checkout-container h1 {
+            margin-bottom: 20px;
+        }
+        .checkout-container input,
+        .checkout-container select,
+        .checkout-container textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .checkout-container button {
+            width: 100%;
+            padding: 10px;
+            background-color: #f9d423;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="checkout-container">
+        <h1>Check-out</h1>
+        <form method="post">
+            {% csrf_token %}
+            <select name="checkin_id" required>
+                <option value="">Selecione um Check-in</option>
+                {% for checkin in checkins %}
+                <option value="{{ checkin.id }}">Quarto {{ checkin.quarto.numero_quarto }} - {{ checkin.hospede.nome_completo }}</option>
+                {% endfor %}
+            </select>
+            <input type="date" name="data_checkout" placeholder="Data de Check-out" required>
+            <input type="number" name="consumo" placeholder="Consumo" step="0.01" required>
+            <textarea name="observacoes" placeholder="Observações"></textarea>
+            <input type="text" name="metodo_pagamento" placeholder="Método de Pagamento" required>
+            <input type="number" name="total_pago" placeholder="Total Pago" step="0.01" required>
+            <button type="submit">Registrar Check-out</button>
+        </form>
+    </div>
+</body>
+</html>

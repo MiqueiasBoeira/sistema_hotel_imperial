@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Check-in</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #f9d423, #ff4e50);
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .checkin-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .checkin-container h1 {
+            margin-bottom: 20px;
+        }
+        .checkin-container input,
+        .checkin-container select,
+        .checkin-container textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .checkin-container button {
+            width: 100%;
+            padding: 10px;
+            background-color: #f9d423;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="checkin-container">
+        <h1>Check-in</h1>
+        <form method="post">
+            {% csrf_token %}
+            <input type="text" name="nome_completo" placeholder="Nome Completo" required>
+            <input type="text" name="cpf" placeholder="CPF" required>
+            <input type="email" name="email" placeholder="E-mail" required>
+            <input type="text" name="telefone" placeholder="Telefone" required>
+            <textarea name="endereco" placeholder="Endereço" required></textarea>
+            <input type="text" name="motivo_viagem" placeholder="Motivo da Viagem" required>
+            <input type="number" name="diaria" placeholder="Diária" required>
+            <input type="number" name="num_dias" placeholder="Número de Dias" required>
+            <input type="date" name="data_checkin" placeholder="Data de Check-in" required>
+            <input type="text" name="companhia" placeholder="Companhia">
+            <input type="number" name="numero_total_hospedes" placeholder="Número Total de Hóspedes" required>
+            <select name="quarto_id" required>
+                <option value="">Selecione um Quarto</option>
+                {% for quarto in quartos %}
+                <option value="{{ quarto.id }}">{{ quarto.numero_quarto }}</option>
+                {% endfor %}
+            </select>
+            <select name="tipo_cliente" id="tipo_cliente" required>
+                <option value="individual">Individual</option>
+                <option value="empresa">Empresa</option>
+            </select>
+            <div id="empresa_info" style="display: none;">
+                <input type="text" name="nome_empresa" placeholder="Nome da Empresa">
+                <input type="text" name="cnpj" placeholder="CNPJ">
+            </div>
+            <button type="submit">Registrar Check-in</button>
+        </form>
+    </div>
+    <script>
+        document.getElementById('tipo_cliente').addEventListener('change', function() {
+            var empresaInfo = document.getElementById('empresa_info');
+            if (this.value === 'empresa') {
+                empresaInfo.style.display = 'block';
+            } else {
+                empresaInfo.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

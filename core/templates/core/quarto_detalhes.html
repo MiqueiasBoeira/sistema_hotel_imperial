@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Detalhes do Quarto</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #f9d423, #ff4e50);
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+        }
+        .quarto-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            width: 80%;
+            margin: 10px 0;
+        }
+        .quarto-container h1 {
+            margin-bottom: 20px;
+        }
+        .reserva {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <div class="quarto-container">
+        <h1>Detalhes do Quarto {{ quarto.numero_quarto }}</h1>
+        <h2>Reservas</h2>
+        {% for reserva in reservas %}
+        <div class="reserva">
+            <p>Hóspede: {% if reserva.hospede %}{{ reserva.hospede.nome_completo }}{% else %}N/A{% endif %}</p>
+            <p>Data de Início: {{ reserva.data_inicio }}</p>
+            <p>Data de Fim: {{ reserva.data_fim }}</p>
+        </div>
+        {% empty %}
+        <p>Não há reservas para este quarto.</p>
+        {% endfor %}
+    </div>
+</body>
+</html>
