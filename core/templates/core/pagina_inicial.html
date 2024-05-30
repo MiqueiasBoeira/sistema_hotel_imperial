@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -7,6 +9,30 @@
             font-family: Arial, sans-serif;
             background: linear-gradient(to right, #f9d423, #ff4e50);
             color: #333;
+            padding-top: 70px; /* Espaço para o header fixo */
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #333;
+            color: #fff;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+        .header img {
+            height: 50px;
+        }
+        .header nav a {
+            color: #fff;
+            margin: 0 15px;
+            text-decoration: none;
+        }
+        .header nav a:hover {
+            text-decoration: underline;
         }
         .quarto {
             border: 1px solid #ccc;
@@ -18,6 +44,20 @@
     </style>
 </head>
 <body>
+    <header class="header">
+        <img src="{% static 'images/logo.png' %}" alt="Hotel Imperial Logo">
+        <nav>
+            <a href="{% url 'pagina_inicial' %}">Página Inicial</a>
+            <a href="{% url 'checkin' %}">Check-in</a>
+            <a href="{% url 'checkout' %}">Check-out</a>
+            <a href="{% url 'reserva' %}">Reservas</a>
+            <a href="{% url 'financas' %}">Finanças</a>
+            <form method="post" action="{% url 'logout' %}" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit" style="background: none; border: none; color: #fff; cursor: pointer; text-decoration: underline; margin: 0; padding: 0;">Logout</button>
+        </form>
+        </nav>
+    </header>
     <h1>Página Inicial</h1>
     <div>
         {% for quarto in quartos %}

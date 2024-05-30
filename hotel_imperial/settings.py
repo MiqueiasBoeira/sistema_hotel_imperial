@@ -9,13 +9,25 @@ https://docs.djangoproject.com/en/5.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# URL to use when referring to static files located in STATIC_ROOT.
+STATIC_URL = '/static/'
 
+# The absolute path to the directory where collectstatic will collect static files for deployment.
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# Additional locations the staticfiles app will traverse if the FileSystemFinder finder is enabled.
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
+
+
+LOGOUT_REDIRECT_URL = '/login/'
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
