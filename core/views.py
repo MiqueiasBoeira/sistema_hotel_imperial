@@ -6,13 +6,6 @@ from django.contrib import messages
 
 
 
-
-
-@login_required
-def pagina_inicial(request):
-    quartos = Quarto.objects.all()
-    return render(request, 'core/pagina_inicial.html', {'quartos': quartos})
-
 def login_view(request):
     if request.method == 'POST':
         username = request.POST['username']
@@ -27,7 +20,14 @@ def login_view(request):
 
 
 
+@login_required
+def pagina_inicial(request):
+    quartos = Quarto.objects.all()
+    return render(request, 'core/pagina_inicial.html', {'quartos': quartos})
 
+
+
+@login_required
 def checkin_view(request):
     if request.method == 'POST':
         nome_completo = request.POST['nome_completo']
@@ -87,7 +87,7 @@ def checkin_view(request):
 
 
 
-
+@login_required
 def checkout_view(request):
     if request.method == 'POST':
         checkin_id = request.POST['checkin_id']
@@ -124,7 +124,7 @@ def checkout_view(request):
     checkins = Checkin.objects.filter(quarto__estado='ocupado')
     return render(request, 'core/checkout.html', {'checkins': checkins})
 
-
+@login_required
 def reserva_view(request):
     if request.method == 'POST':
         data_inicio = request.POST['data_inicio']
@@ -157,12 +157,11 @@ def reserva_view(request):
     quartos = Quarto.objects.all()
     hospedes = Hospede.objects.all()
     return render(request, 'core/reserva.html', {'quartos': quartos, 'hospedes': hospedes})
-
+@login_required
 def quarto_detalhes(request, quarto_id):
     quarto = get_object_or_404(Quarto, id=quarto_id)
     reservas = Reserva.objects.filter(quarto=quarto).order_by('data_inicio')
     return render(request, 'core/quarto_detalhes.html', {'quarto': quarto, 'reservas': reservas})
-
 
 @login_required
 @permission_required('core.view_financeira', raise_exception=True)
