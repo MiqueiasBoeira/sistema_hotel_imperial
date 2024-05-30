@@ -1,0 +1,15 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Gerenciar Hóspedes{% endblock %}
+
+{% block content %}
+<div class="hospedes-container">
+    <h1>Gerenciar Hóspedes</h1>
+    <a href="{% url 'incluir_hospede_view' %}" class="btn">Adicionar Novo Hóspede</a>
+    <ul>
+        {% for hospede in hospedes %}
+        <li>{{ hospede.nome_completo }} - <a href="{% url 'editar_hospede_view' hospede.id %}">Editar</a> - <a href="{% url 'excluir_hospede_view' hospede.id %}">Excluir</a></li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

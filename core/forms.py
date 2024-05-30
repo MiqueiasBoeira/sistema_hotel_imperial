@@ -16,3 +16,9 @@ class CheckinForm(forms.ModelForm):
         self.fields['hospede'].queryset = Hospede.objects.all()
         self.fields['data_checkin'].widget = forms.DateInput(attrs={'type': 'date'})
         self.fields['data_checkout'].widget = forms.DateInput(attrs={'type': 'date'})
+
+
+class HospedeForm(forms.ModelForm):
+    class Meta:
+        model = Hospede
+        fields = ['nome_completo', 'cpf', 'email', 'telefone', 'endereco', 'tipo_cliente', 'empresa']

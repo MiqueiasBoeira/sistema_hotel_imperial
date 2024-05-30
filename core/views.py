@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import Quarto, Hospede, Checkin, Empresa, Checkout, Financeira, Reserva
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
-from .forms import CheckinForm
+from .forms import CheckinForm, HospedeForm
 
 
 
@@ -19,8 +19,6 @@ def login_view(request):
             return render(request, 'core/login.html', {'error': 'Usuário ou senha inválidos'})
     return render(request, 'core/login.html')
 
-
-
 @login_required
 def pagina_inicial(request):
     quartos = Quarto.objects.select_related('hospede', 'checkin').all()
@@ -33,7 +31,6 @@ def pagina_inicial(request):
         'quartos': quartos
     }
     return render(request, 'core/pagina_inicial.html', context)
-
 
 @login_required
 def checkin_view(request):
@@ -50,6 +47,48 @@ def checkin_view(request):
     else:
         form = CheckinForm()
     return render(request, 'core/checkin.html', {'form': form})
+
+@login_required
+def incluir_hospede_view(request):
+    if request.method == 'POST':
+        form = HospedeForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('checkin_view')  # Redirecionar de volta ao formulário de check-in
+    else:
+        form = HospedeForm()
+    return render(request, 'core/incluir_hospede.html', {'form': form})
+
+@login_required
+def gerenciar_hospedes_view(request):
+    hospedes = Hospede.objects.all()
+    return render(request, 'core/gerenciar_hospedes.html', {'hospedes': hospedes})
+
+
+@login_required
+def editar_hospede_view(request, pk):
+    hospede = get_object_or_404(Hospede, pk=pk)
+    if request.method == 'POST':
+        form = HospedeForm(request.POST, instance=hospede)
+        if form.is_valid():
+            form.save()
+            return redirect('gerenciar_hospedes_view')
+    else:
+        form = HospedeForm(instance=hospede)
+    return render(request, 'core/incluir_hospede.html', {'form': form})
+
+@login_required
+def excluir_hospede_view(request, pk):
+    hospede = get_object_or_404(Hospede, pk=pk)
+    if request.method == 'POST':
+        hospede.delete()
+        return redirect('gerenciar_hospedes_view')
+    return render(request, 'core/excluir_hospede_confirm.html', {'hospede': hospede})
+
+
+
+
+
 
 @login_required
 def checkout_view(request):

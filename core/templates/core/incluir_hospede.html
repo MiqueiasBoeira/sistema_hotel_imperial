@@ -1,0 +1,14 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Incluir Hóspede{% endblock %}
+
+{% block content %}
+<div class="hospede-container">
+    <h1>Incluir Hóspede</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Adicionar Hóspede</button>
+    </form>
+</div>
+{% endblock %}

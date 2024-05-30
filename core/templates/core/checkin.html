@@ -9,6 +9,7 @@
 <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
+    <a href="{% url 'incluir_hospede_view' %}" class="btn">Incluir Hóspede</a>
         <button type="submit">Registrar Check-in</button>
     </form>
 </div>
