@@ -1,0 +1,67 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Hotel Imperial{% endblock %}</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #F5F5DC; /* Bege claro */
+            color: #333333; /* Cinza escuro */
+            padding-top: 70px; /* Espaço para o header fixo */
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #D4AF37; /* Dourado */
+            color: #fff;
+            position: fixed;
+            width: 97%;
+            top: 0;
+            z-index: 1000;
+        }
+        .header img {
+            height: 50px;
+        }
+        .header nav a {
+            color: #fff;
+            margin: 0 15px;
+            text-decoration: none;
+        }
+        .header nav a:hover {
+            text-decoration: underline;
+        }
+        .main-container {
+            padding: 20px;
+            background: #FFFFFF; /* Branco */
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <img src="{% static 'images/logo.png' %}" alt="Hotel Imperial Logo">
+        <nav>
+            <a href="{% url 'pagina_inicial' %}">Página Inicial</a>
+            <a href="{% url 'checkin' %}">Check-in</a>
+            <a href="{% url 'checkout' %}">Check-out</a>
+            <a href="{% url 'reserva' %}">Reservas</a>
+            <a href="{% url 'financas' %}">Finanças</a>
+            <form method="post" action="{% url 'logout' %}" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" style="background: none; border: none; color: #fff; cursor: pointer; text-decoration: underline; margin: 0; padding: 0;">Logout</button>
+            </form>
+        </nav>
+    </header>
+    <div class="main-container">
+        {% block content %}
+        {% endblock %}
+    </div>
+</body>
+</html>
