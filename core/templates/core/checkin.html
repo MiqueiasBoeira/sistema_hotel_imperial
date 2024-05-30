@@ -4,37 +4,16 @@
 
 {% block content %}
 
+<div class="checkin-container">
 <h1>Check-in</h1>
-        <form method="post">
-            {% csrf_token %}
-            <input type="text" name="nome_completo" placeholder="Nome Completo" required>
-            <input type="text" name="cpf" placeholder="CPF" required>
-            <input type="email" name="email" placeholder="E-mail" required>
-            <input type="text" name="telefone" placeholder="Telefone" required>
-            <textarea name="endereco" placeholder="Endereço" required></textarea>
-            <input type="text" name="motivo_viagem" placeholder="Motivo da Viagem" required>
-            <input type="number" name="diaria" placeholder="Diária" required>
-            <input type="number" name="num_dias" placeholder="Número de Dias" required>
-            <input type="date" name="data_checkin" placeholder="Data de Check-in" required>
-            <input type="text" name="companhia" placeholder="Companhia">
-            <input type="number" name="numero_total_hospedes" placeholder="Número Total de Hóspedes" required>
-            <select name="quarto_id" required>
-                <option value="">Selecione um Quarto</option>
-                {% for quarto in quartos %}
-                <option value="{{ quarto.id }}">{{ quarto.numero_quarto }}</option>
-                {% endfor %}
-            </select>
-            <select name="tipo_cliente" id="tipo_cliente" required>
-                <option value="individual">Individual</option>
-                <option value="empresa">Empresa</option>
-            </select>
-            <div id="empresa_info" style="display: none;">
-                <input type="text" name="nome_empresa" placeholder="Nome da Empresa">
-                <input type="text" name="cnpj" placeholder="CNPJ">
-            </div>
-            <button type="submit">Registrar Check-in</button>
-        </form>
-    </div>
+<form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Registrar Check-in</button>
+    </form>
+</div>
+
+</div>
 
 
 {% block extra_script %}
