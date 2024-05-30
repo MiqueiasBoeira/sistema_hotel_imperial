@@ -20,7 +20,7 @@
 
             {% if quarto.estado == 'ocupado' %}
             <p class="room-guest">Hóspede: {{ quarto.hospede.nome_completo }}</p>
-            <p class="room-dates">Check-in: {{ quarto.checkin.data_checkin }} | Check-out: precisa configurar essa parte ainda</p>
+            <p class="room-dates">Check-in: {{ quarto.checkin.data_checkin }} | Check-out: {{ quarto.checkin.data_checkout }}</p>
             {% endif %}
 
         </div>

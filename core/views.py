@@ -22,13 +22,16 @@ def login_view(request):
 
 @login_required
 def pagina_inicial(request):
-    quartos = Quarto.objects.all()
+    quartos = Quarto.objects.select_related('hospede', 'checkin').all()
+    for quarto in quartos:
+        hospede = quarto.hospede.nome_completo if quarto.hospede else "None"
+        data_checkin = quarto.checkin.data_checkin if quarto.checkin else "None"
+        data_checkout = quarto.checkin.data_checkout if quarto.checkin else "None"
+        print(f'Quarto {quarto.numero_quarto} - Hóspede: {hospede} - Check-in: {data_checkin} - Check-out: {data_checkout}')
     context = {
-        'quartos':quartos
+        'quartos': quartos
     }
-
     return render(request, 'core/pagina_inicial.html', context)
-
 
 
 @login_required
