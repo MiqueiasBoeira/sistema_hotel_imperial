@@ -3,24 +3,75 @@
 {% block title %}Check-in{% endblock %}
 
 {% block content %}
-
 <div class="checkin-container">
-<h1>Check-in</h1>
-<form method="post">
+    <h1>Check-in</h1>
+    <form method="post">
         {% csrf_token %}
-        {{ form.as_p }}
-        <a href="{% url 'incluir_hospede_view' %}" class="btn">Incluir Hóspede</a>
-        <a href="{% url 'incluir_empresa_view' %}" class="btn">Incluir Empresa</a>
+        <label for="tipo_hospede">Tipo de Hóspede:</label>
+        <select id="tipo_hospede" name="tipo_hospede" onchange="toggleHospedeFields()">
+            <option value="individual">Individual</option>
+            <option value="empresa">Empresa</option>
+        </select>
+
+
+        <div id="individual_fields" style="display:block;">
+            <p></p>
+            {{ form.hospede_principal.label_tag }} {{ form.hospede_principal }}
+            <a href="{% url 'incluir_hospede_view' %}" class="btn">Incluir Hóspede</a>
+            <p></p>
+            <button type="button" onclick="addHospedeField()">Adicionar Hóspede Secundário</button>
+            <button type="button" onclick="removeHospedeField()">Remover Hóspede Secundário</button>
+
+            <div id="hospede_fields"></div>
+        </div>
+
+
+        <div id="empresa_fields" style="display:none;">
+            <p></p>
+            {{ form.empresa.label_tag }} {{ form.empresa }}
+            <a href="{% url 'incluir_empresa_view' %}" class="btn">Incluir Empresa</a>
+            <p></p>
+            <button type="button" onclick="addHospedeField()">Adicionar Hóspede</button>
+            <div id="empresa_hospede_fields"></div>
+        </div>
+
+        {{ form.as_p|safe }}
+
         <button type="submit">Registrar Check-in</button>
     </form>
 </div>
 
-</div>
-
-
 {% block extra_script %}
 <script src="{% static 'js/checkin.js' %}"></script>
+<script>
+function toggleHospedeFields() {
+    const tipoHospede = document.getElementById('tipo_hospede').value;
+    document.getElementById('individual_fields').style.display = tipoHospede === 'individual' ? 'block' : 'none';
+    document.getElementById('empresa_fields').style.display = tipoHospede === 'empresa' ? 'block' : 'none';
+}
+
+let hospedeCount = 0;
+
+function addHospedeField() {
+    hospedeCount++;
+    const hospedeFields = document.getElementById('hospede_fields');
+    const newField = document.createElement('div');
+    newField.id = `hospede_${hospedeCount}`;
+    newField.innerHTML = `
+        <label for="hospede_${hospedeCount}">Hóspede ${hospedeCount}:</label>
+        <input type="text" id="hospede_${hospedeCount}" name="hospede_${hospedeCount}">
+    `;
+    hospedeFields.appendChild(newField);
+}
+
+function removeHospedeField() {
+    if (hospedeCount > 0) {
+        const hospedeFields = document.getElementById('hospede_fields');
+        const fieldToRemove = document.getElementById(`hospede_${hospedeCount}`);
+        hospedeFields.removeChild(fieldToRemove);
+        hospedeCount--;
+    }
+}
+</script>
 {% endblock %}
-
-{%  endblock %}
-
+{% endblock %}

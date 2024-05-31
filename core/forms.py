@@ -3,19 +3,15 @@ from .models import Checkin, Quarto, Hospede, Empresa
 
 
 class CheckinForm(forms.ModelForm):
+    tipo_hospede = forms.ChoiceField(choices=[('individual', 'Individual'), ('empresa', 'Empresa')], required=True)
+    hospede_principal = forms.ModelChoiceField(queryset=Hospede.objects.filter(tipo_cliente='individual'), required=False)
+    empresa = forms.ModelChoiceField(queryset=Empresa.objects.all(), required=False)
+    acompanhantes = forms.CharField(widget=forms.Textarea, required=False)
+    hospedes_secundarios = forms.ModelMultipleChoiceField(queryset=Hospede.objects.filter(tipo_cliente='individual'), required=False)
+
     class Meta:
         model = Checkin
-        fields = [
-            'hospede', 'quarto', 'data_checkin', 'data_checkout',
-            'diaria', 'num_dias', 'companhia', 'motivo_viagem', 'numero_total_hospedes'
-        ]
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['quarto'].queryset = Quarto.objects.filter(estado='livre')
-        self.fields['hospede'].queryset = Hospede.objects.all()
-        self.fields['data_checkin'].widget = forms.DateInput(attrs={'type': 'date'})
-        self.fields['data_checkout'].widget = forms.DateInput(attrs={'type': 'date'})
+        fields = ['quarto', 'data_checkin', 'data_checkout', 'diaria', 'num_dias', 'companhia', 'motivo_viagem', 'numero_total_hospedes', 'hospede_principal', 'empresa', 'acompanhantes', 'hospedes_secundarios']
 
 
 class HospedeForm(forms.ModelForm):

@@ -36,17 +36,39 @@ def pagina_inicial(request):
 def checkin_view(request):
     if request.method == 'POST':
         form = CheckinForm(request.POST)
+        tipo_hospede = request.POST.get('tipo_hospede')
+
         if form.is_valid():
-            checkin = form.save()
-            quarto = checkin.quarto
-            quarto.estado = 'ocupado'
-            quarto.hospede = checkin.hospede
-            quarto.checkin = checkin
-            quarto.save()
+            checkin = form.save(commit=False)
+
+            if tipo_hospede == 'individual':
+                hospede_principal = form.cleaned_data['hospede_principal']
+                checkin.hospede_principal = hospede_principal
+
+                # Adicionar hóspedes secundários
+                hospedes_secundarios = form.cleaned_data['hospedes_secundarios']
+                checkin.save()
+                checkin.hospedes_secundarios.set(hospedes_secundarios)
+
+            elif tipo_hospede == 'empresa':
+                empresa = form.cleaned_data['empresa']
+                checkin.empresa = empresa
+                # Adicionar hóspedes da empresa
+                hospedes_secundarios = form.cleaned_data['hospedes_secundarios']
+                checkin.save()
+                checkin.hospedes_secundarios.set(hospedes_secundarios)
+
+            # Adicionar acompanhantes
+            acompanhantes = form.cleaned_data['acompanhantes']
+            checkin.acompanhantes = acompanhantes
+
+            checkin.save()
             return redirect('pagina_inicial')
     else:
         form = CheckinForm()
     return render(request, 'core/checkin.html', {'form': form})
+
+
 
 @login_required
 def incluir_hospede_view(request):

@@ -1,5 +1,7 @@
 from django.db import models
 from django.utils import timezone
+
+
 class Empresa(models.Model):
     nome_empresa = models.CharField(max_length=255)
     cnpj = models.CharField(max_length=18, unique=True)
@@ -31,18 +33,20 @@ class Quarto(models.Model):
         return self.numero_quarto
 
 class Checkin(models.Model):
-    hospede = models.ForeignKey(Hospede, on_delete=models.CASCADE, related_name='checkins')
-    quarto = models.ForeignKey(Quarto, on_delete=models.CASCADE, related_name='checkins')
-    data_checkin = models.DateField(default=timezone.now)
-    data_checkout = models.DateField(default=timezone.now)
+    hospede_principal = models.ForeignKey(Hospede, on_delete=models.CASCADE, related_name='checkins_principal')
+    quarto = models.ForeignKey('Quarto', on_delete=models.CASCADE, related_name='checkins')
+    data_checkin = models.DateField()
+    data_checkout = models.DateField()
     diaria = models.DecimalField(max_digits=10, decimal_places=2)
     num_dias = models.IntegerField()
     companhia = models.CharField(max_length=255, null=True, blank=True)
     motivo_viagem = models.CharField(max_length=255)
     numero_total_hospedes = models.IntegerField()
+    acompanhantes = models.TextField(null=True, blank=True)  # Lista de nomes de acompanhantes
+    hospedes_secundarios = models.ManyToManyField(Hospede, related_name='checkins_secundarios', blank=True)
 
     def __str__(self):
-        return f'{self.hospede.nome_completo} - Quarto {self.quarto.numero_quarto}'
+        return f'{self.hospede_principal.nome_completo} - {self.quarto.numero_quarto}'
 
 class Checkout(models.Model):
     checkin = models.ForeignKey(Checkin, on_delete=models.CASCADE, related_name='checkouts')
