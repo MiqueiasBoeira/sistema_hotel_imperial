@@ -93,7 +93,7 @@ def incluir_empresa_view(request):
         form = EmpresaForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('gerenciar_empresas_view')
+            return redirect('checkin')
     else:
         form = EmpresaForm()
     return render(request, 'core/incluir_empresa.html', {'form': form})
