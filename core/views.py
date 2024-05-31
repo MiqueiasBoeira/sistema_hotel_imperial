@@ -54,7 +54,7 @@ def incluir_hospede_view(request):
         form = HospedeForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('checkin_view')  # Redirecionar de volta ao formulário de check-in
+            return redirect('checkin')  # Redirecionar de volta ao formulário de check-in
     else:
         form = HospedeForm()
     return render(request, 'core/incluir_hospede.html', {'form': form})
