@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Quarto, Hospede, Checkin, Empresa, Checkout, Financeira, Reserva
@@ -32,6 +33,7 @@ def pagina_inicial(request):
     }
     return render(request, 'core/pagina_inicial.html', context)
 
+
 @login_required
 def checkin_view(request):
     hospedes = Hospede.objects.filter(tipo_cliente='individual')
@@ -45,23 +47,23 @@ def checkin_view(request):
             checkin = form.save(commit=False)
 
             if tipo_hospede == 'individual':
-                hospede_principal = form.cleaned_data['hospede_principal']
+                hospede_id = request.POST.get('selected_hospede_id')
+                hospede_principal = get_object_or_404(Hospede, id=hospede_id)
                 checkin.hospede_principal = hospede_principal
 
-                # Adicionar hóspedes secundários
                 hospedes_secundarios = request.POST.getlist('hospede_secundario')
                 checkin.save()
                 checkin.hospedes_secundarios.set(hospedes_secundarios)
 
             elif tipo_hospede == 'empresa':
-                empresa = form.cleaned_data['empresa']
+                empresa_id = request.POST.get('selected_empresa_id')
+                empresa = get_object_or_404(Empresa, id=empresa_id)
                 checkin.empresa = empresa
-                # Adicionar hóspedes da empresa
+
                 hospedes_empresariais = request.POST.getlist('hospede_empresa')
                 checkin.save()
                 checkin.hospedes_secundarios.set(hospedes_empresariais)
 
-            # Adicionar acompanhantes
             acompanhantes = form.cleaned_data['acompanhantes']
             checkin.acompanhantes = acompanhantes
 
@@ -70,7 +72,19 @@ def checkin_view(request):
     else:
         form = CheckinForm()
     return render(request, 'core/checkin.html', {'form': form, 'hospedes': hospedes, 'empresas': empresas})
+@login_required
+def search_hospede(request):
+    query = request.GET.get('q')
+    hospedes = Hospede.objects.filter(nome_completo__icontains=query) | Hospede.objects.filter(cpf__icontains=query)
+    results = [{'id': hospede.id, 'nome_completo': hospede.nome_completo, 'cpf': hospede.cpf} for hospede in hospedes]
+    return JsonResponse(results, safe=False)
 
+@login_required
+def search_empresa(request):
+    query = request.GET.get('q')
+    empresas = Empresa.objects.filter(nome_empresa__icontains(query)) | Empresa.objects.filter(cnpj__icontains(query))
+    results = [{'id': empresa.id, 'nome_empresa': empresa.nome_empresa, 'cnpj': empresa.cnpj} for empresa in empresas]
+    return JsonResponse(results, safe=False)
 
 @login_required
 def incluir_hospede_view(request):

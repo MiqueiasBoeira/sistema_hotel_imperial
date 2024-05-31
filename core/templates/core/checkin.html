@@ -14,42 +14,34 @@
         </select>
 
         <div id="individual_fields" style="display:block;">
-            <p></p>
-            {{ form.hospede_principal.label_tag }} {{ form.hospede_principal }}
+            <label for="search_hospede">Pesquisar Hóspede:</label>
+            <input type="text" id="search_hospede" name="search_hospede" oninput="searchHospede()">
+            <ul id="search_results"></ul>
+            <input type="hidden" id="selected_hospede_id" name="selected_hospede_id">
             <a href="{% url 'incluir_hospede_view' %}" class="btn">Registrar Hóspede</a>
-            <p></p>
             <button type="button" onclick="addIndividualHospedeField()">Adicionar outro hóspede</button>
             <div id="individual_hospede_fields"></div>
         </div>
 
         <div id="empresa_fields" style="display:none;">
-            <p></p>
-            {{ form.empresa.label_tag }} {{ form.empresa }}
+            <label for="search_empresa">Pesquisar Empresa:</label>
+            <input type="text" id="search_empresa" name="search_empresa" oninput="searchEmpresa()">
+            <ul id="search_empresa_results"></ul>
+            <input type="hidden" id="selected_empresa_id" name="selected_empresa_id">
             <a href="{% url 'incluir_empresa_view' %}" class="btn">Incluir Empresa</a>
-            <p></p>
             <button type="button" onclick="addEmpresaHospedeField()">Adicionar Hóspede</button>
             <a href="{% url 'incluir_hospede_view' %}" class="btn">Registrar Hóspede</a>
-
             <div id="empresa_hospede_fields"></div>
         </div>
 
-        <p></p>
         {{ form.quarto.label_tag }} {{ form.quarto }}
-        <p></p>
         {{ form.data_checkin.label_tag }} {{ form.data_checkin }}
-        <p></p>
         {{ form.data_checkout.label_tag }} {{ form.data_checkout }}
-        <p></p>
         {{ form.diaria.label_tag }} {{ form.diaria }}
-        <p></p>
         {{ form.num_dias.label_tag }} {{ form.num_dias }}
-        <p></p>
         {{ form.companhia.label_tag }} {{ form.companhia }}
-        <p></p>
         {{ form.motivo_viagem.label_tag }} {{ form.motivo_viagem }}
-        <p></p>
         {{ form.acompanhantes.label_tag }} {{ form.acompanhantes }}
-        <p></p>
 
         <button type="submit">Registrar Check-in</button>
     </form>
@@ -62,6 +54,56 @@ function toggleHospedeFields() {
     const tipoHospede = document.getElementById('tipo_hospede').value;
     document.getElementById('individual_fields').style.display = tipoHospede === 'individual' ? 'block' : 'none';
     document.getElementById('empresa_fields').style.display = tipoHospede === 'empresa' ? 'block' : 'none';
+}
+
+function searchHospede() {
+    const query = document.getElementById('search_hospede').value;
+    fetch(`/search_hospede/?q=${query}`)
+        .then(response => response.json())
+        .then(data => {
+            const results = document.getElementById('search_results');
+            results.innerHTML = '';
+            data.forEach(hospede => {
+                const li = document.createElement('li');
+                li.textContent = `${hospede.nome_completo} - ${hospede.cpf}`;
+                li.onclick = () => selectHospede(hospede.id, hospede.nome_completo);
+                results.appendChild(li);
+            });
+            const addHospedeButton = document.createElement('li');
+            addHospedeButton.innerHTML = '<a href="{% url 'incluir_hospede_view' %}">Adicionar Novo Hóspede</a>';
+            results.appendChild(addHospedeButton);
+        });
+}
+
+function selectHospede(id, nome_completo) {
+    document.getElementById('search_hospede').value = nome_completo;
+    document.getElementById('selected_hospede_id').value = id;
+    document.getElementById('search_results').innerHTML = '';
+}
+
+function searchEmpresa() {
+    const query = document.getElementById('search_empresa').value;
+    fetch(`/search_empresa/?q=${query}`)
+        .then(response => response.json())
+        .then(data => {
+            const results = document.getElementById('search_empresa_results');
+            results.innerHTML = '';
+            data.forEach(empresa => {
+                const li = document.createElement('li');
+                li.textContent = `${empresa.nome_empresa} - ${empresa.cnpj}`;
+                li.onclick = () => selectEmpresa(empresa.id, empresa.nome_empresa);
+                results.appendChild(li);
+            });
+            const addEmpresaButton = document.createElement('li');
+            addEmpresaButton.innerHTML = '<a href="{% url 'incluir_empresa_view' %}">Adicionar Nova Empresa</a>';
+            results.appendChild(addEmpresaButton);
+        });
+}
+
+function selectEmpresa(id, nome_empresa) {
+    document.getElementById('search_empresa').value = nome_empresa;
+    document.getElementById('selected_empresa_id').value = id;
+    document.getElementById('search_empresa_results').innerHTML = '';
 }
 
 function addIndividualHospedeField() {

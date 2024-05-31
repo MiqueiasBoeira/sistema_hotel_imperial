@@ -19,5 +19,7 @@ urlpatterns = [
     path('empresas/', views.gerenciar_empresas_view, name='gerenciar_empresas_view'),
     path('empresas/editar/<int:pk>/', views.editar_empresa_view, name='editar_empresa_view'),
     path('empresas/excluir/<int:pk>/', views.excluir_empresa_view, name='excluir_empresa_view'),
+    path('search_hospede/', views.search_hospede, name='search_hospede'),
+    path('search_empresa/', views.search_empresa, name='search_empresa'),
     # Adicione outras rotas conforme necessário
 ]
