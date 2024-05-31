@@ -79,12 +79,15 @@ def search_hospede(request):
     results = [{'id': hospede.id, 'nome_completo': hospede.nome_completo, 'cpf': hospede.cpf} for hospede in hospedes]
     return JsonResponse(results, safe=False)
 
+
+
 @login_required
 def search_empresa(request):
     query = request.GET.get('q')
-    empresas = Empresa.objects.filter(nome_empresa__icontains(query)) | Empresa.objects.filter(cnpj__icontains(query))
+    empresas = Empresa.objects.filter(nome_empresa__icontains=query) | Empresa.objects.filter(cnpj__icontains=query)
     results = [{'id': empresa.id, 'nome_empresa': empresa.nome_empresa, 'cnpj': empresa.cnpj} for empresa in empresas]
     return JsonResponse(results, safe=False)
+
 
 @login_required
 def incluir_hospede_view(request):
