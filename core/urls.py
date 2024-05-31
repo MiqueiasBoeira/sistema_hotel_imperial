@@ -15,5 +15,9 @@ urlpatterns = [
     path('hospedes/', views.gerenciar_hospedes_view, name='gerenciar_hospedes_view'),
     path('hospedes/editar/<int:pk>/', views.editar_hospede_view, name='editar_hospede_view'),
     path('hospedes/excluir/<int:pk>/', views.excluir_hospede_view, name='excluir_hospede_view'),
+    path('empresas/incluir/', views.incluir_empresa_view, name='incluir_empresa_view'),
+    path('empresas/', views.gerenciar_empresas_view, name='gerenciar_empresas_view'),
+    path('empresas/editar/<int:pk>/', views.editar_empresa_view, name='editar_empresa_view'),
+    path('empresas/excluir/<int:pk>/', views.excluir_empresa_view, name='excluir_empresa_view'),
     # Adicione outras rotas conforme necessário
 ]

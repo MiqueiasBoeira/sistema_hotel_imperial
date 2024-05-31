@@ -1,0 +1,15 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Excluir Empresa{% endblock %}
+
+{% block content %}
+<div class="empresa-container">
+    <h1>Excluir Empresa</h1>
+    <p>Tem certeza de que deseja excluir a empresa "{{ empresa.nome_empresa }}"?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">Excluir</button>
+        <a href="{% url 'gerenciar_empresas_view' %}" class="btn">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

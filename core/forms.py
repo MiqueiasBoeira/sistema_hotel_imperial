@@ -1,5 +1,5 @@
 from django import forms
-from .models import Checkin, Quarto, Hospede
+from .models import Checkin, Quarto, Hospede, Empresa
 
 
 class CheckinForm(forms.ModelForm):
@@ -22,3 +22,9 @@ class HospedeForm(forms.ModelForm):
     class Meta:
         model = Hospede
         fields = ['nome_completo', 'cpf', 'email', 'telefone', 'endereco', 'tipo_cliente', 'empresa']
+
+
+class EmpresaForm(forms.ModelForm):
+    class Meta:
+        model = Empresa
+        fields = ['nome_empresa', 'cnpj', 'telefone', 'endereco']

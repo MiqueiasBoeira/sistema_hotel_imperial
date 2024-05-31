@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import Quarto, Hospede, Checkin, Empresa, Checkout, Financeira, Reserva
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
-from .forms import CheckinForm, HospedeForm
+from .forms import CheckinForm, HospedeForm, EmpresaForm
 
 
 
@@ -87,6 +87,41 @@ def excluir_hospede_view(request, pk):
 
 
 
+@login_required
+def incluir_empresa_view(request):
+    if request.method == 'POST':
+        form = EmpresaForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('gerenciar_empresas_view')
+    else:
+        form = EmpresaForm()
+    return render(request, 'core/incluir_empresa.html', {'form': form})
+
+@login_required
+def gerenciar_empresas_view(request):
+    empresas = Empresa.objects.all()
+    return render(request, 'core/gerenciar_empresas.html', {'empresas': empresas})
+
+@login_required
+def editar_empresa_view(request, pk):
+    empresa = get_object_or_404(Empresa, pk=pk)
+    if request.method == 'POST':
+        form = EmpresaForm(request.POST, instance=empresa)
+        if form.is_valid():
+            form.save()
+            return redirect('gerenciar_empresas_view')
+    else:
+        form = EmpresaForm(instance=empresa)
+    return render(request, 'core/incluir_empresa.html', {'form': form})
+
+@login_required
+def excluir_empresa_view(request, pk):
+    empresa = get_object_or_404(Empresa, pk=pk)
+    if request.method == 'POST':
+        empresa.delete()
+        return redirect('gerenciar_empresas_view')
+    return render(request, 'core/excluir_empresa_confirm.html', {'empresa': empresa})
 
 
 

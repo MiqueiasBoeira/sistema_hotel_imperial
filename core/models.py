@@ -3,6 +3,8 @@ from django.utils import timezone
 class Empresa(models.Model):
     nome_empresa = models.CharField(max_length=255)
     cnpj = models.CharField(max_length=18, unique=True)
+    telefone = models.CharField(max_length=20, null=True, blank=True)
+    endereco = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return self.nome_empresa

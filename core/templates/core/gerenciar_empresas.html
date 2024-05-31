@@ -1,0 +1,15 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Gerenciar Empresas{% endblock %}
+
+{% block content %}
+<div class="empresas-container">
+    <h1>Gerenciar Empresas</h1>
+    <a href="{% url 'incluir_empresa_view' %}" class="btn">Adicionar Nova Empresa</a>
+    <ul>
+        {% for empresa in empresas %}
+        <li>{{ empresa.nome_empresa }} - <a href="{% url 'editar_empresa_view' empresa.id %}">Editar</a> - <a href="{% url 'excluir_empresa_view' empresa.id %}">Excluir</a></li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}
