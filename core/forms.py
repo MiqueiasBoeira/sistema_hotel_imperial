@@ -13,7 +13,6 @@ class CheckinForm(forms.ModelForm):
         model = Checkin
         fields = ['quarto', 'data_checkin', 'data_checkout', 'diaria', 'num_dias', 'companhia', 'motivo_viagem', 'numero_total_hospedes', 'hospede_principal', 'empresa', 'acompanhantes', 'hospedes_secundarios']
 
-
 class HospedeForm(forms.ModelForm):
     class Meta:
         model = Hospede

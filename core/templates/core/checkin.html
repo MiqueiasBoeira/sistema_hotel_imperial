@@ -13,25 +13,22 @@
             <option value="empresa">Empresa</option>
         </select>
 
-
         <div id="individual_fields" style="display:block;">
             <p></p>
             {{ form.hospede_principal.label_tag }} {{ form.hospede_principal }}
-            <a href="{% url 'incluir_hospede_view' %}" class="btn">Incluir Hóspede</a>
+            <a href="{% url 'incluir_hospede_view' %}" class="btn">Registrar Hóspede</a>
             <p></p>
-            <button type="button" onclick="addHospedeField()">Adicionar Hóspede Secundário</button>
-            <button type="button" onclick="removeHospedeField()">Remover Hóspede Secundário</button>
-
-            <div id="hospede_fields"></div>
+            <button type="button" onclick="addIndividualHospedeField()">Adicionar Hóspede Secundário</button>
+            <div id="individual_hospede_fields"></div>
         </div>
-
 
         <div id="empresa_fields" style="display:none;">
             <p></p>
             {{ form.empresa.label_tag }} {{ form.empresa }}
-            <a href="{% url 'incluir_empresa_view' %}" class="btn">Incluir Empresa</a>
+            <a href="{% url 'incluir_empresa_view' %}" class="btn">Registrar Empresa</a>
             <p></p>
-            <button type="button" onclick="addHospedeField()">Adicionar Hóspede</button>
+            <button type="button" onclick="addEmpresaHospedeField()">Adicionar hóspede</button>
+            <a href="{% url 'incluir_hospede_view' %}" class="btn">Registrar Hóspede</a>
             <div id="empresa_hospede_fields"></div>
         </div>
 
@@ -50,27 +47,32 @@ function toggleHospedeFields() {
     document.getElementById('empresa_fields').style.display = tipoHospede === 'empresa' ? 'block' : 'none';
 }
 
-let hospedeCount = 0;
-
-function addHospedeField() {
-    hospedeCount++;
-    const hospedeFields = document.getElementById('hospede_fields');
+function addIndividualHospedeField() {
+    const hospedeFields = document.getElementById('individual_hospede_fields');
     const newField = document.createElement('div');
-    newField.id = `hospede_${hospedeCount}`;
     newField.innerHTML = `
-        <label for="hospede_${hospedeCount}">Hóspede ${hospedeCount}:</label>
-        <input type="text" id="hospede_${hospedeCount}" name="hospede_${hospedeCount}">
+        <label for="hospede_secundario">Hóspede Secundário:</label>
+        <select name="hospede_secundario">
+            {% for hospede in hospedes %}
+                <option value="{{ hospede.id }}">{{ hospede.nome_completo }}</option>
+            {% endfor %}
+        </select>
     `;
     hospedeFields.appendChild(newField);
 }
 
-function removeHospedeField() {
-    if (hospedeCount > 0) {
-        const hospedeFields = document.getElementById('hospede_fields');
-        const fieldToRemove = document.getElementById(`hospede_${hospedeCount}`);
-        hospedeFields.removeChild(fieldToRemove);
-        hospedeCount--;
-    }
+function addEmpresaHospedeField() {
+    const hospedeFields = document.getElementById('empresa_hospede_fields');
+    const newField = document.createElement('div');
+    newField.innerHTML = `
+        <label for="hospede_empresa">Hóspede da Empresa:</label>
+        <select name="hospede_empresa">
+            {% for hospede in hospedes %}
+                <option value="{{ hospede.id }}">{{ hospede.nome_completo }}</option>
+            {% endfor %}
+        </select>
+    `;
+    hospedeFields.appendChild(newField);
 }
 </script>
 {% endblock %}
