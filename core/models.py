@@ -41,7 +41,7 @@ class Checkin(models.Model):
     num_dias = models.IntegerField()
     companhia = models.CharField(max_length=255, null=True, blank=True)
     motivo_viagem = models.CharField(max_length=255)
-    numero_total_hospedes = models.IntegerField()
+    numero_total_hospedes = models.IntegerField(null=True, blank=True)
     acompanhantes = models.TextField(null=True, blank=True)  # Lista de nomes de acompanhantes
     hospedes_secundarios = models.ManyToManyField(Hospede, related_name='checkins_secundarios', blank=True)
 
