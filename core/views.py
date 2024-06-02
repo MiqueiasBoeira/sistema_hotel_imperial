@@ -5,6 +5,9 @@ from .models import Quarto, Hospede, Checkin, Empresa, Checkout, Financeira, Res
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 from .forms import CheckinForm, HospedeForm, EmpresaForm
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 
@@ -40,38 +43,51 @@ def checkin_view(request):
     empresas = Empresa.objects.all()
 
     if request.method == 'POST':
+        logger.info("Recebendo dados do formulário de check-in")
         form = CheckinForm(request.POST)
         tipo_hospede = request.POST.get('tipo_hospede')
+        logger.info(f"Tipo de hóspede: {tipo_hospede}")
 
         if form.is_valid():
             checkin = form.save(commit=False)
 
             if tipo_hospede == 'individual':
                 hospede_id = request.POST.get('selected_hospede_id')
+                logger.info(f"Hóspede principal ID: {hospede_id}")
                 hospede_principal = get_object_or_404(Hospede, id=hospede_id)
                 checkin.hospede_principal = hospede_principal
 
                 hospedes_secundarios = request.POST.getlist('hospede_secundario')
+                logger.info(f"Hóspedes secundários: {hospedes_secundarios}")
                 checkin.save()
                 checkin.hospedes_secundarios.set(hospedes_secundarios)
 
             elif tipo_hospede == 'empresa':
                 empresa_id = request.POST.get('selected_empresa_id')
+                logger.info(f"Empresa ID: {empresa_id}")
                 empresa = get_object_or_404(Empresa, id=empresa_id)
                 checkin.empresa = empresa
 
                 hospedes_empresariais = request.POST.getlist('hospede_empresa')
+                logger.info(f"Hóspedes empresariais: {hospedes_empresariais}")
                 checkin.save()
                 checkin.hospedes_secundarios.set(hospedes_empresariais)
 
             acompanhantes = form.cleaned_data['acompanhantes']
+            logger.info(f"Acompanhantes: {acompanhantes}")
             checkin.acompanhantes = acompanhantes
 
             checkin.save()
+            logger.info("Check-in salvo com sucesso")
             return redirect('pagina_inicial')
+        else:
+            logger.error("Formulário de check-in inválido")
+            logger.error(form.errors)  # Adicionar log dos erros do formulário
     else:
         form = CheckinForm()
+
     return render(request, 'core/checkin.html', {'form': form, 'hospedes': hospedes, 'empresas': empresas})
+
 @login_required
 def search_hospede(request):
     query = request.GET.get('q')

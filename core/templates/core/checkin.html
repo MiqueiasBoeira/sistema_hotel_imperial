@@ -18,6 +18,7 @@
             <input type="text" id="search_hospede" name="search_hospede" oninput="searchHospede()">
             <ul id="search_results"></ul>
             <input type="hidden" id="selected_hospede_id" name="selected_hospede_id">
+            <button type="button" onclick="confirmHospedeSelection()">Confirmar Hóspede</button>
             <a href="{% url 'incluir_hospede_view' %}" class="btn">Registrar Hóspede</a>
             <button type="button" onclick="addIndividualHospedeField()">Adicionar outro hóspede</button>
             <div id="individual_hospede_fields"></div>
@@ -28,6 +29,7 @@
             <input type="text" id="search_empresa" name="search_empresa" oninput="searchEmpresa()">
             <ul id="search_empresa_results"></ul>
             <input type="hidden" id="selected_empresa_id" name="selected_empresa_id">
+            <button type="button" onclick="confirmEmpresaSelection()">Confirmar Empresa</button>
             <a href="{% url 'incluir_empresa_view' %}" class="btn">Incluir Empresa</a>
             <button type="button" onclick="addEmpresaHospedeField()">Adicionar Hóspede</button>
             <a href="{% url 'incluir_hospede_view' %}" class="btn">Registrar Hóspede</a>
@@ -35,8 +37,8 @@
         </div>
 
         {{ form.quarto.label_tag }} {{ form.quarto }}
-        {{ form.data_checkin.label_tag }} {{ form.data_checkin }}
-        {{ form.data_checkout.label_tag }} {{ form.data_checkout }}
+        {{ form.data_checkin.label_tag }} <input type="date" name="data_checkin" id="id_data_checkin">
+        {{ form.data_checkout.label_tag }} <input type="date" name="data_checkout" id="id_data_checkout">
         {{ form.diaria.label_tag }} {{ form.diaria }}
         {{ form.num_dias.label_tag }} {{ form.num_dias }}
         {{ form.companhia.label_tag }} {{ form.companhia }}
@@ -81,6 +83,15 @@ function selectHospede(id, nome_completo) {
     document.getElementById('search_results').innerHTML = '';
 }
 
+function confirmHospedeSelection() {
+    const selectedHospede = document.getElementById('selected_hospede_id').value;
+    if (selectedHospede) {
+        alert("Hóspede selecionado com sucesso!");
+    } else {
+        alert("Por favor, selecione um hóspede.");
+    }
+}
+
 function searchEmpresa() {
     const query = document.getElementById('search_empresa').value;
     fetch(`/search_empresa/?q=${query}`)
@@ -104,6 +115,15 @@ function selectEmpresa(id, nome_empresa) {
     document.getElementById('search_empresa').value = nome_empresa;
     document.getElementById('selected_empresa_id').value = id;
     document.getElementById('search_empresa_results').innerHTML = '';
+}
+
+function confirmEmpresaSelection() {
+    const selectedEmpresa = document.getElementById('selected_empresa_id').value;
+    if (selectedEmpresa) {
+        alert("Empresa selecionada com sucesso!");
+    } else {
+        alert("Por favor, selecione uma empresa.");
+    }
 }
 
 function addIndividualHospedeField() {
