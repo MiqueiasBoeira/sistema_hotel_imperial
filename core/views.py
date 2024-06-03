@@ -37,56 +37,65 @@ def pagina_inicial(request):
     return render(request, 'core/pagina_inicial.html', context)
 
 
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from .models import Hospede, Empresa, Checkin, Quarto
+from .forms import CheckinForm
+
+
 @login_required
 def checkin_view(request):
     hospedes = Hospede.objects.filter(tipo_cliente='individual')
     empresas = Empresa.objects.all()
 
     if request.method == 'POST':
-        logger.info("Recebendo dados do formulário de check-in")
         form = CheckinForm(request.POST)
         tipo_hospede = request.POST.get('tipo_hospede')
-        logger.info(f"Tipo de hóspede: {tipo_hospede}")
 
         if form.is_valid():
             checkin = form.save(commit=False)
 
             if tipo_hospede == 'individual':
                 hospede_id = request.POST.get('selected_hospede_id')
-                logger.info(f"Hóspede principal ID: {hospede_id}")
-                hospede_principal = get_object_or_404(Hospede, id=hospede_id)
-                checkin.hospede_principal = hospede_principal
+                if not hospede_id:
+                    form.add_error('selected_hospede_id', 'Selecione um hóspede principal')
+                else:
+                    hospede_principal = get_object_or_404(Hospede, id=hospede_id)
+                    checkin.hospede_principal = hospede_principal
 
-                hospedes_secundarios = request.POST.getlist('hospede_secundario')
-                logger.info(f"Hóspedes secundários: {hospedes_secundarios}")
-                checkin.save()
-                checkin.hospedes_secundarios.set(hospedes_secundarios)
+                    hospedes_secundarios = request.POST.getlist('hospede_secundario')
+                    checkin.save()
+                    checkin.hospedes_secundarios.set(hospedes_secundarios)
 
             elif tipo_hospede == 'empresa':
                 empresa_id = request.POST.get('selected_empresa_id')
-                logger.info(f"Empresa ID: {empresa_id}")
-                empresa = get_object_or_404(Empresa, id=empresa_id)
-                checkin.empresa = empresa
+                if not empresa_id:
+                    form.add_error('selected_empresa_id', 'Selecione uma empresa')
+                else:
+                    empresa = get_object_or_404(Empresa, id=empresa_id)
+                    checkin.empresa = empresa
 
-                hospedes_empresariais = request.POST.getlist('hospede_empresa')
-                logger.info(f"Hóspedes empresariais: {hospedes_empresariais}")
-                checkin.save()
-                checkin.hospedes_secundarios.set(hospedes_empresariais)
+                    hospedes_empresariais = request.POST.getlist('hospede_empresa')
+                    checkin.save()
+                    checkin.hospedes_secundarios.set(hospedes_empresariais)
 
             acompanhantes = form.cleaned_data['acompanhantes']
-            logger.info(f"Acompanhantes: {acompanhantes}")
             checkin.acompanhantes = acompanhantes
 
+            quarto_id = form.cleaned_data['quarto'].id
+            quarto = get_object_or_404(Quarto, id=quarto_id)
+
             checkin.save()
-            logger.info("Check-in salvo com sucesso")
+            quarto.estado = 'ocupado'
+            quarto.checkin = checkin  # Associa o check-in ao quarto
+            quarto.hospede = checkin.hospede_principal  # Atualiza o hóspede do quarto
+            quarto.save()
             return redirect('pagina_inicial')
-        else:
-            logger.error("Formulário de check-in inválido")
-            logger.error(form.errors)  # Adicionar log dos erros do formulário
     else:
         form = CheckinForm()
 
     return render(request, 'core/checkin.html', {'form': form, 'hospedes': hospedes, 'empresas': empresas})
+
 
 @login_required
 def search_hospede(request):
