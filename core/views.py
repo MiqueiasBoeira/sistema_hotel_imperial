@@ -37,16 +37,14 @@ def pagina_inicial(request):
     return render(request, 'core/pagina_inicial.html', context)
 
 
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
-from .models import Hospede, Empresa, Checkin, Quarto
-from .forms import CheckinForm
+
 
 
 @login_required
 def checkin_view(request):
     hospedes = Hospede.objects.filter(tipo_cliente='individual')
     empresas = Empresa.objects.all()
+    quartos_livres = Quarto.objects.filter(estado='livre')  # Filtra apenas quartos livres
 
     if request.method == 'POST':
         form = CheckinForm(request.POST)
@@ -94,7 +92,8 @@ def checkin_view(request):
     else:
         form = CheckinForm()
 
-    return render(request, 'core/checkin.html', {'form': form, 'hospedes': hospedes, 'empresas': empresas})
+    return render(request, 'core/checkin.html',
+                  {'form': form, 'hospedes': hospedes, 'empresas': empresas, 'quartos': quartos_livres})
 
 
 @login_required

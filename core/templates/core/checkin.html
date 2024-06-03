@@ -36,7 +36,14 @@
             <div id="empresa_hospede_fields"></div>
         </div>
 
-        {{ form.quarto.label_tag }} {{ form.quarto }}
+            <div>
+        <label for="quarto">Quarto:</label>
+        <select name="quarto" id="quarto">
+            {% for quarto in quartos %}
+                <option value="{{ quarto.id }}">{{ quarto.numero_quarto }}</option>
+            {% endfor %}
+        </select>
+    </div>
         {{ form.data_checkin.label_tag }} <input type="date" name="data_checkin" id="id_data_checkin">
         {{ form.data_checkout.label_tag }} <input type="date" name="data_checkout" id="id_data_checkout">
         {{ form.diaria.label_tag }} {{ form.diaria }}
