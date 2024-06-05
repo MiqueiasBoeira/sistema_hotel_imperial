@@ -11,6 +11,7 @@
     <h1>Página Inicial</h1>
     <div class="room-cards-container">
         {% for quarto in quartos %}
+        <a href="{% url 'quarto_detalhes' quarto.id %}" class="room-card-link">
         <div class="room-card {% if quarto.estado == 'livre' %}available
                               {% else %}occupied
                               {% endif %}">

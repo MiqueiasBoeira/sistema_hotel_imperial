@@ -261,10 +261,11 @@ def reserva_view(request):
     hospedes = Hospede.objects.all()
     return render(request, 'core/reserva.html', {'quartos': quartos, 'hospedes': hospedes})
 @login_required
-def quarto_detalhes(request, quarto_id):
-    quarto = get_object_or_404(Quarto, id=quarto_id)
-    reservas = Reserva.objects.filter(quarto=quarto).order_by('data_inicio')
+def quarto_detalhes(request, id):
+    quarto = get_object_or_404(Quarto, id=id)
+    reservas = Reserva.objects.filter(quarto=quarto)
     return render(request, 'core/quarto_detalhes.html', {'quarto': quarto, 'reservas': reservas})
+
 
 @login_required
 @permission_required('core.view_financeira', raise_exception=True)
