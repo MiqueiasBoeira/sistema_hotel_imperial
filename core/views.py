@@ -287,3 +287,29 @@ def financas_view(request):
 
     transacoes = Financeira.objects.all().order_by('-data')
     return render(request, 'core/financas.html', {'transacoes': transacoes})
+
+
+def get_checkin_details(request, checkin_id):
+    checkin = get_object_or_404(Checkin, id=checkin_id)
+    hospede = checkin.hospede_principal
+    data = {
+        'checkin': {
+            'data_checkin': checkin.data_checkin,
+            'data_checkout': checkin.data_checkout,
+            'diaria': checkin.diaria,
+            'num_dias': checkin.num_dias,
+            'companhia': checkin.companhia,
+            'motivo_viagem': checkin.motivo_viagem,
+            'acompanhantes': checkin.acompanhantes,
+        },
+        'hospede': {
+            'nome_completo': hospede.nome_completo,
+            'cpf': hospede.cpf,
+            'email': hospede.email,
+            'telefone': hospede.telefone,
+            'endereco': hospede.endereco,
+            'tipo_cliente': hospede.tipo_cliente,
+            'empresa': hospede.empresa.nome_empresa if hospede.empresa else None,
+        }
+    }
+    return JsonResponse(data)

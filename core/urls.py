@@ -21,5 +21,6 @@ urlpatterns = [
     path('empresas/excluir/<int:pk>/', views.excluir_empresa_view, name='excluir_empresa_view'),
     path('search_hospede/', views.search_hospede, name='search_hospede'),
     path('search_empresa/', views.search_empresa, name='search_empresa'),
+    path('get_checkin_details/<int:checkin_id>/', views.get_checkin_details, name='get_checkin_details'),
     # Adicione outras rotas conforme necessário
 ]
