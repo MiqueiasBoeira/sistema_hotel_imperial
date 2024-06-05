@@ -264,8 +264,8 @@ def reserva_view(request):
 def quarto_detalhes(request, id):
     quarto = get_object_or_404(Quarto, id=id)
     reservas = Reserva.objects.filter(quarto=quarto)
-    return render(request, 'core/quarto_detalhes.html', {'quarto': quarto, 'reservas': reservas})
-
+    checkin = Checkin.objects.filter(quarto_checkin=quarto).first()
+    return render(request, 'core/quarto_detalhes.html', {'quarto': quarto, 'reservas': reservas, 'checkin': checkin})
 
 @login_required
 @permission_required('core.view_financeira', raise_exception=True)

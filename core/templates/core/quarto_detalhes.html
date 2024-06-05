@@ -1,21 +1,43 @@
 {% extends 'core/base.html' %}
 
-{% block title %}Quarto{% endblock %}
+{% block title %}Quarto {{ quarto.numero_quarto }}{% endblock %}
 
 {% block content %}
-        <h1>Detalhes do Quarto {{ quarto.numero_quarto }}</h1>
+<h1>Detalhes do Quarto {{ quarto.numero_quarto }}</h1>
 
+{% if quarto.estado == 'ocupado' %}
+    <h2>Hóspede Atual</h2>
+    <div class="hospede-detalhes">
+        <p><strong>Nome:</strong> {{ quarto.hospede.nome_completo }}</p>
+        <p><strong>CPF:</strong> {{ quarto.hospede.cpf }}</p>
+        <p><strong>E-mail:</strong> {{ quarto.hospede.email }}</p>
+        <p><strong>Telefone:</strong> {{ quarto.hospede.telefone }}</p>
+        <p><strong>Endereço:</strong> {{ quarto.hospede.endereco }}</p>
+        <p><strong>Tipo de Cliente:</strong> {{ quarto.hospede.tipo_cliente }}</p>
+        {% if quarto.hospede.tipo_cliente == 'empresa' %}
+            <p><strong>Empresa:</strong> {{ quarto.hospede.empresa.nome_empresa }}</p>
+        {% endif %}
+        <h3>Check-in</h3>
+        <p><strong>Data de Check-in:</strong> {{ quarto.checkin.data_checkin }}</p>
+        <p><strong>Data de Check-out:</strong> {{ quarto.checkin.data_checkout }}</p>
+        <p><strong>Diária:</strong> {{ quarto.checkin.diaria }}</p>
+        <p><strong>Número de Dias:</strong> {{ quarto.checkin.num_dias }}</p>
+        <p><strong>Companhia:</strong> {{ quarto.checkin.companhia }}</p>
+        <p><strong>Motivo da Viagem:</strong> {{ quarto.checkin.motivo_viagem }}</p>
+        <p><strong>Acompanhantes:</strong> {{ quarto.checkin.acompanhantes }}</p>
+    </div>
+{% else %}
+    <p>O quarto está atualmente livre.</p>
+{% endif %}
 
-
-        <h2>Reservas</h2>
-        {% for reserva in reservas %}
-        <div class="reserva">
-            <p>Hóspede: {% if reserva.hospede %}{{ reserva.hospede.nome_completo }}{% else %}N/A{% endif %}</p>
-            <p>Data de Início: {{ reserva.data_inicio }}</p>
-            <p>Data de Fim: {{ reserva.data_fim }}</p>
-        </div>
-        {% empty %}
-        <p>Não há reservas para este quarto.</p>
-        {% endfor %}
-
+<h2>Reservas</h2>
+{% for reserva in reservas %}
+<div class="reserva">
+    <p>Hóspede: {% if reserva.hospede %}{{ reserva.hospede.nome_completo }}{% else %}N/A{% endif %}</p>
+    <p>Data de Início: {{ reserva.data_inicio }}</p>
+    <p>Data de Fim: {{ reserva.data_fim }}</p>
+</div>
+{% empty %}
+<p>Não há reservas para este quarto.</p>
+{% endfor %}
 {% endblock %}
