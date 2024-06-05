@@ -190,8 +190,12 @@ def excluir_empresa_view(request, pk):
 
 
 
+
+
 @login_required
 def checkout_view(request):
+    checkins_ativos = Checkin.objects.filter(quarto__estado='ocupado').exclude(id__in=Checkout.objects.values('checkin_id'))
+
     if request.method == 'POST':
         checkin_id = request.POST['checkin_id']
         consumo = request.POST['consumo']
@@ -200,7 +204,7 @@ def checkout_view(request):
         total_pago = request.POST['total_pago']
         data_checkout = request.POST['data_checkout']
 
-        checkin = Checkin.objects.get(id=checkin_id)
+        checkin = get_object_or_404(Checkin, id=checkin_id)
 
         checkout = Checkout.objects.create(
             checkin=checkin,
@@ -224,8 +228,8 @@ def checkout_view(request):
 
         return redirect('pagina_inicial')
 
-    checkins = Checkin.objects.filter(quarto__estado='ocupado')
-    return render(request, 'core/checkout.html', {'checkins': checkins})
+    return render(request, 'core/checkout.html', {'checkins': checkins_ativos})
+
 
 @login_required
 def reserva_view(request):

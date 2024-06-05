@@ -10,7 +10,7 @@
     <select name="checkin_id" id="checkin_id" required>
         <option value="">Selecione um Check-in</option>
         {% for checkin in checkins %}
-        <option value="{{ checkin.id }}">Quarto {{ checkin.quarto.numero_quarto }} - {{ checkin.hospede.nome_completo }}</option>
+        <option value="{{ checkin.id }}">Quarto {{ checkin.quarto.numero_quarto }} - {{ checkin.hospede_principal.nome_completo }}</option>
         {% endfor %}
     </select>
     <div id="checkin-details"></div>
