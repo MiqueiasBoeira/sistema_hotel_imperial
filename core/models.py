@@ -60,13 +60,17 @@ class Checkout(models.Model):
         return f'Checkout {self.checkin.id} - Quarto {self.checkin.quarto.numero_quarto}'
 
 class Reserva(models.Model):
+    quarto = models.ForeignKey(Quarto, on_delete=models.CASCADE, related_name='reservas')
+    hospede = models.ForeignKey(Hospede, null=True, blank=True, on_delete=models.SET_NULL, related_name='reservas')
+    nome_hospede = models.CharField(max_length=255, null=True, blank=True)
+    contato_hospede = models.CharField(max_length=255, null=True, blank=True)
     data_inicio = models.DateField()
     data_fim = models.DateField()
-    quarto = models.ForeignKey(Quarto, on_delete=models.CASCADE, related_name='reservas')
-    hospede = models.ForeignKey(Hospede, on_delete=models.SET_NULL, null=True, blank=True, related_name='reservas')
+    status = models.CharField(max_length=10, choices=[('ativo', 'Ativo'), ('cancelado', 'Cancelado')], default='ativo')
 
     def __str__(self):
-        return f'Reserva Quarto {self.quarto.numero_quarto}'
+        return f"Reserva do quarto {self.quarto.numero_quarto} para {self.nome_hospede or self.hospede.nome_completo} de {self.data_inicio} a {self.data_fim}"
+
 
 class Financeira(models.Model):
     TIPO_CHOICES = [

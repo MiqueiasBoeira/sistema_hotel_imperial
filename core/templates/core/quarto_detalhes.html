@@ -30,12 +30,17 @@
     <p>O quarto está atualmente livre.</p>
 {% endif %}
 
-<h2>Reservas</h2>
+<h2>Reservas Ativas</h2>
 {% for reserva in reservas %}
 <div class="reserva">
     <p>Hóspede: {% if reserva.hospede %}{{ reserva.hospede.nome_completo }}{% else %}N/A{% endif %}</p>
     <p>Data de Início: {{ reserva.data_inicio }}</p>
     <p>Data de Fim: {{ reserva.data_fim }}</p>
+    <form method="post" action="{% url 'quarto_detalhes' quarto.id %}">
+        {% csrf_token %}
+        <input type="hidden" name="reserva_id" value="{{ reserva.id }}">
+        <button type="submit" name="cancelar_reserva">Cancelar Reserva</button>
+    </form>
 </div>
 {% empty %}
 <p>Não há reservas para este quarto.</p>

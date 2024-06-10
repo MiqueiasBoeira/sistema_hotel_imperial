@@ -10,23 +10,39 @@
                 <p class="{{ message.tags }}">{{ message }}</p>
             {% endfor %}
         {% endif %}
-        <form method="post">
+        <form method="post" action="{% url 'reserva' %}">
             {% csrf_token %}
-            <input type="date" name="data_inicio" placeholder="Data de Início" required>
-            <input type="date" name="data_fim" placeholder="Data de Fim" required>
-            <select name="quarto_id" required>
-                <option value="">Selecione um Quarto</option>
+            <label for="quarto">Quarto:</label>
+            <select id="quarto" name="quarto_id" required>
                 {% for quarto in quartos %}
-                <option value="{{ quarto.id }}">{{ quarto.numero_quarto }}</option>
+                    <option value="{{ quarto.id }}">{{ quarto.numero_quarto }}</option>
                 {% endfor %}
             </select>
-            <select name="hospede_id">
-                <option value="">Selecione um Hóspede (opcional)</option>
+
+            <label for="data_inicio">Data de Início:</label>
+            <input type="date" id="data_inicio" name="data_inicio" required>
+
+            <label for="data_fim">Data de Fim:</label>
+            <input type="date" id="data_fim" name="data_fim" required>
+
+            <h3>Dados do Hóspede</h3>
+            <label for="hospede_existente">Hóspede Existente:</label>
+            <select id="hospede_existente" name="hospede_id">
+                <option value="">Selecione um hóspede existente (opcional)</option>
                 {% for hospede in hospedes %}
-                <option value="{{ hospede.id }}">{{ hospede.nome_completo }}</option>
+                    <option value="{{ hospede.id }}">{{ hospede.nome_completo }}</option>
                 {% endfor %}
             </select>
-            <button type="submit">Registrar Reserva</button>
+
+            <h4>Ou</h4>
+
+            <label for="nome_hospede">Nome do Hóspede:</label>
+            <input type="text" id="nome_hospede" name="nome_hospede">
+
+            <label for="contato_hospede">Contato do Hóspede:</label>
+            <input type="text" id="contato_hospede" name="contato_hospede">
+
+            <button type="submit">Reservar</button>
         </form>
 
 {% endblock %}

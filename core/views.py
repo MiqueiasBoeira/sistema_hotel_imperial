@@ -230,46 +230,58 @@ def checkout_view(request):
 
     return render(request, 'core/checkout.html', {'checkins': checkins_ativos})
 
+# views.py
 
 @login_required
 def reserva_view(request):
     if request.method == 'POST':
+        quarto_id = request.POST['quarto_id']
         data_inicio = request.POST['data_inicio']
         data_fim = request.POST['data_fim']
-        quarto_id = request.POST['quarto_id']
         hospede_id = request.POST.get('hospede_id')
+        nome_hospede = request.POST.get('nome_hospede')
+        contato_hospede = request.POST.get('contato_hospede')
 
-        # Verifique se há conflito de reservas para o quarto selecionado
-        reservas_conflitantes = Reserva.objects.filter(
-            quarto_id=quarto_id,
-            data_fim__gte=data_inicio,
-            data_inicio__lte=data_fim
-        )
+        quarto = Quarto.objects.get(id=quarto_id)
 
-        if reservas_conflitantes.exists():
-            messages.error(request, "O quarto selecionado já está reservado para este período.")
-            return redirect('reserva')
+        if hospede_id:
+            hospede = Hospede.objects.get(id=hospede_id)
+        else:
+            hospede = None
 
-        # Crie a nova reserva se não houver conflitos
         reserva = Reserva.objects.create(
+            quarto=quarto,
+            hospede=hospede,
+            nome_hospede=nome_hospede,
+            contato_hospede=contato_hospede,
             data_inicio=data_inicio,
-            data_fim=data_fim,
-            quarto_id=quarto_id,
-            hospede_id=hospede_id
+            data_fim=data_fim
         )
-
-        messages.success(request, "Reserva criada com sucesso!")
         return redirect('pagina_inicial')
 
-    quartos = Quarto.objects.all()
     hospedes = Hospede.objects.all()
-    return render(request, 'core/reserva.html', {'quartos': quartos, 'hospedes': hospedes})
+    quartos = Quarto.objects.all()
+    return render(request, 'core/reserva.html', {'hospedes': hospedes, 'quartos': quartos})
+
+
+
 @login_required
 def quarto_detalhes(request, id):
     quarto = get_object_or_404(Quarto, id=id)
-    reservas = Reserva.objects.filter(quarto=quarto)
-    checkin = Checkin.objects.filter(quarto_checkin=quarto).first()
-    return render(request, 'core/quarto_detalhes.html', {'quarto': quarto, 'reservas': reservas, 'checkin': checkin})
+    reservas = quarto.reservas.filter(status='ativo')
+
+    if request.method == 'POST' and 'cancelar_reserva' in request.POST:
+        reserva_id = request.POST['reserva_id']
+        reserva = get_object_or_404(Reserva, id=reserva_id)
+        reserva.status = 'cancelado'
+        reserva.save()
+        return redirect('quarto_detalhes', id=quarto.id)
+
+    context = {
+        'quarto': quarto,
+        'reservas': reservas
+    }
+    return render(request, 'core/quarto_detalhes.html', context)
 
 @login_required
 @permission_required('core.view_financeira', raise_exception=True)
