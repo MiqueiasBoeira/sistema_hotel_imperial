@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import Quarto, Hospede, Checkin, Empresa, Checkout, Financeira, Reserva
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
-from .forms import CheckinForm, HospedeForm, EmpresaForm
+from .forms import CheckinForm, HospedeForm, EmpresaForm, FinanceiroForm
 import logging
 
 logger = logging.getLogger(__name__)
@@ -285,24 +285,26 @@ def quarto_detalhes(request, id):
 
 @login_required
 @permission_required('core.view_financeira', raise_exception=True)
-def financas_view(request):
-    if request.method == 'POST':
+def financeiro_view(request):
+    form = FinanceiroForm()
+    lancamentos = Financeira.objects.all()
+
+    if request.method == 'POST' and 'tipo' in request.POST:
+        # Lógica para adicionar uma nova transação
         tipo = request.POST['tipo']
         descricao = request.POST['descricao']
         valor = request.POST['valor']
         data = request.POST['data']
+        Financeira.objects.create(tipo=tipo, descricao=descricao, valor=valor, data=data)
+    elif request.method == 'POST' and 'data_inicial' in request.POST:
+        # Lógica para filtrar os lançamentos financeiros
+        form = FinanceiroForm(request.POST)
+        if form.is_valid():
+            data_inicial = form.cleaned_data['data_inicial']
+            data_final = form.cleaned_data['data_final']
+            lancamentos = Financeira.objects.filter(data__range=[data_inicial, data_final])
 
-        Financeira.objects.create(
-            tipo=tipo,
-            descricao=descricao,
-            valor=valor,
-            data=data
-        )
-
-        return redirect('financas')
-
-    transacoes = Financeira.objects.all().order_by('-data')
-    return render(request, 'core/financas.html', {'transacoes': transacoes})
+    return render(request, 'core/financas.html', {'form': form, 'lancamentos': lancamentos})
 
 
 def get_checkin_details(request, checkin_id):
@@ -329,3 +331,4 @@ def get_checkin_details(request, checkin_id):
         }
     }
     return JsonResponse(data)
+

@@ -4,28 +4,58 @@
 
 {% block content %}
 <h1>Finanças</h1>
-        <form method="post">
-            {% csrf_token %}
-            <select name="tipo" required>
-                <option value="">Selecione o Tipo</option>
-                <option value="receita">Receita</option>
-                <option value="despesa">Despesa</option>
-            </select>
-            <input type="text" name="descricao" placeholder="Descrição" required>
-            <input type="number" step="0.01" name="valor" placeholder="Valor" required>
-            <input type="date" name="data" required>
-            <button type="submit">Adicionar Transação</button>
-        </form>
-        <h2>Transações</h2>
-        {% for transacao in transacoes %}
-        <div class="transacao {{ transacao.tipo }}">
-            <p><strong>{{ transacao.tipo|capfirst }}</strong>: {{ transacao.descricao }}</p>
-            <p>Valor: R$ {{ transacao.valor }}</p>
-            <p>Data: {{ transacao.data }}</p>
-        </div>
-        {% empty %}
-        <p>Não há transações registradas.</p>
-        {% endfor %}
 
+<!-- Seção para Adicionar Lançamento -->
+<section id="adicionar-lancamento">
+    <h2>Adicionar Lançamento</h2>
+    <form method="post">
+        {% csrf_token %}
+        <select name="tipo" required>
+            <option value="">Selecione o Tipo</option>
+            <option value="receita">Receita</option>
+            <option value="despesa">Despesa</option>
+        </select>
+        <input type="text" name="descricao" placeholder="Descrição" required>
+        <input type="number" step="0.01" name="valor" placeholder="Valor" required>
+        <input type="date" name="data" required>
+        <button type="submit">Adicionar Transação</button>
+    </form>
+</section>
+
+<!-- Seção para Visualizar Lançamentos -->
+<section id="visualizar-lancamentos">
+    <h2>Visualizar Lançamentos</h2>
+    <form method="post" class="form-inline">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Filtrar</button>
+    </form>
+
+    <h2>Resultados</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Data</th>
+                <th>Tipo</th>
+                <th>Descrição</th>
+                <th>Valor</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for transacao in lancamentos %}
+            <tr>
+                <td>{{ transacao.data }}</td>
+                <td>{{ transacao.tipo }}</td>
+                <td>{{ transacao.descricao }}</td>
+                <td>{{ transacao.valor }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4">Nenhum lançamento encontrado para o período selecionado.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
 
 {% endblock %}

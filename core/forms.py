@@ -22,3 +22,9 @@ class EmpresaForm(forms.ModelForm):
     class Meta:
         model = Empresa
         fields = ['nome_empresa', 'cnpj', 'telefone', 'endereco']
+
+
+class FinanceiroForm(forms.Form):
+    data_inicial = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), required=True)
+    data_final = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), required=True)
+
