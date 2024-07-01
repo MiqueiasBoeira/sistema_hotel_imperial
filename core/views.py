@@ -230,8 +230,6 @@ def checkout_view(request):
 
     return render(request, 'core/checkout.html', {'checkins': checkins_ativos})
 
-# views.py
-
 @login_required
 def reserva_view(request):
     if request.method == 'POST':
@@ -246,6 +244,8 @@ def reserva_view(request):
 
         if hospede_id:
             hospede = Hospede.objects.get(id=hospede_id)
+            nome_hospede = hospede.nome_completo
+            contato_hospede = hospede.telefone
         else:
             hospede = None
 
@@ -262,7 +262,6 @@ def reserva_view(request):
     hospedes = Hospede.objects.all()
     quartos = Quarto.objects.all()
     return render(request, 'core/reserva.html', {'hospedes': hospedes, 'quartos': quartos})
-
 
 
 @login_required
@@ -282,7 +281,6 @@ def quarto_detalhes(request, id):
         'reservas': reservas
     }
     return render(request, 'core/quarto_detalhes.html', context)
-
 @login_required
 @permission_required('core.view_financeira', raise_exception=True)
 def financeiro_view(request):

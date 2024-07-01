@@ -1,3 +1,4 @@
+<!-- quarto_detalhes.html -->
 {% extends 'core/base.html' %}
 
 {% block title %}Quarto {{ quarto.numero_quarto }}{% endblock %}
@@ -33,7 +34,8 @@
 <h2>Reservas Ativas</h2>
 {% for reserva in reservas %}
 <div class="reserva">
-    <p>Hóspede: {% if reserva.hospede %}{{ reserva.hospede.nome_completo }}{% else %}N/A{% endif %}</p>
+    <p>Hóspede: {% if reserva.hospede %}{{ reserva.hospede.nome_completo }}{% else %}{{ reserva.nome_hospede }}{% endif %}</p>
+    <p>Contato: {% if reserva.hospede %}{{ reserva.hospede.telefone }}{% else %}{{ reserva.contato_hospede }}{% endif %}</p>
     <p>Data de Início: {{ reserva.data_inicio }}</p>
     <p>Data de Fim: {{ reserva.data_fim }}</p>
     <form method="post" action="{% url 'quarto_detalhes' quarto.id %}">
