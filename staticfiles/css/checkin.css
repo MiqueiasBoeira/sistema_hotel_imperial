@@ -1,0 +1,72 @@
+/* checkin.css */
+
+body {
+    background-color: pink; /* Adicione esta regra temporariamente para verificar o carregamento do CSS */
+}
+
+
+.checkin-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.checkin-container h1 {
+    color: #D4AF37; /* Dourado */
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.checkin-container form {
+    display: flex;
+    flex-direction: column;
+}
+
+.checkin-container label {
+    margin: 10px 0 5px;
+    font-weight: bold;
+}
+
+.checkin-container input[type="text"],
+.checkin-container input[type="date"],
+.checkin-container select {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    width: 100%;
+}
+
+.checkin-container button {
+    padding: 10px 20px;
+    background-color: #D4AF37; /* Dourado */
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.checkin-container button:hover {
+    background-color: #b88f2a; /* Dourado mais escuro */
+}
+
+.checkin-container a.btn {
+    padding: 10px 20px;
+    background-color: #4CAF50; /* Verde */
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 10px;
+}
+
+.checkin-container a.btn:hover {
+    background-color: #45a049; /* Verde mais escuro */
+}

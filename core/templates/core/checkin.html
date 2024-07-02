@@ -2,6 +2,11 @@
 {% load static %}
 {% block title %}Check-in{% endblock %}
 
+{% block extra_head %}
+
+<link rel="stylesheet" href="{% static 'css/checkin.css' %}">
+{% endblock %}
+
 {% block content %}
 <div class="checkin-container">
     <h1>Check-in</h1>
