@@ -5,7 +5,14 @@ function toggleHospedeFields() {
 }
 
 function searchHospede() {
-    const query = document.getElementById('search_hospede').value;
+    const query = document.getElementById('search_hospede').value.trim();
+
+    // Se o campo de pesquisa estiver vazio, limpa os resultados e retorna.
+    if (query === "") {
+        document.getElementById('search_results').innerHTML = '';
+        return;
+    }
+
     fetch(`/search_hospede/?q=${query}`)
         .then(response => response.json())
         .then(data => {
@@ -17,16 +24,16 @@ function searchHospede() {
                 li.onclick = () => selectHospede(hospede.id, hospede.nome_completo);
                 results.appendChild(li);
             });
-            const addHospedeButton = document.createElement('li');
-            addHospedeButton.innerHTML = `<a href="${incluirHospedeUrl}">Adicionar Novo Hóspede</a>`;
-            results.appendChild(addHospedeButton);
         });
 }
 
 function selectHospede(id, nome_completo) {
     document.getElementById('search_hospede').value = nome_completo;
     document.getElementById('selected_hospede_id').value = id;
-    document.getElementById('search_results').innerHTML = '';
+    const results = document.getElementById('search_results');
+    Array.from(results.children).forEach(child => child.classList.remove('selected'));  // Remove a classe de todos os itens
+    event.target.classList.add('selected');  // Adiciona a classe ao item clicado
+    results.innerHTML = '';
 }
 
 function confirmHospedeSelection() {
@@ -39,7 +46,14 @@ function confirmHospedeSelection() {
 }
 
 function searchEmpresa() {
-    const query = document.getElementById('search_empresa').value;
+    const query = document.getElementById('search_empresa').value.trim();
+
+    // Se o campo de pesquisa estiver vazio, limpa os resultados e retorna.
+    if (query === "") {
+        document.getElementById('search_empresa_results').innerHTML = '';
+        return;
+    }
+
     fetch(`/search_empresa/?q=${query}`)
         .then(response => response.json())
         .then(data => {
@@ -51,9 +65,6 @@ function searchEmpresa() {
                 li.onclick = () => selectEmpresa(empresa.id, empresa.nome_empresa);
                 results.appendChild(li);
             });
-            const addEmpresaButton = document.createElement('li');
-            addEmpresaButton.innerHTML = `<a href="${incluirEmpresaUrl}">Adicionar Nova Empresa</a>`;
-            results.appendChild(addEmpresaButton);
         });
 }
 

@@ -34,9 +34,11 @@
     border: 1px solid #ccc;
     border-radius: 4px;
     margin-bottom: 10px;
-    width: 100%;
+    width: 100%; /* Certifique-se de que todos os elementos tenham 100% da largura */
+    box-sizing: border-box; /* Inclui o padding e a borda na largura total */
     font-size: 1em;
 }
+
 
 .checkin-container button,
 .checkin-container a.btn {
@@ -106,3 +108,27 @@
 .checkin-container .btn:hover {
     background-color: #b88f2a; /* Dourado mais escuro */
 }
+
+.checkin-container #search_results li,
+.checkin-container #search_empresa_results li {
+    list-style-type: none;
+    padding: 10px;
+    cursor: pointer;  /* Altera o cursor para pointer */
+    border-bottom: 1px solid #ccc;
+}
+
+.checkin-container #search_results li:hover,
+.checkin-container #search_empresa_results li:hover {
+    background-color: #f0f0f0;
+    color: #D4AF37;
+}
+
+.checkin-container #search-results li.selected ,
+.checkin-container #search_empresa_results li.selected {
+    background-color: #d4af37;  /* Cor de fundo para o item selecionado */
+    color: #fff;  /* Cor do texto para o item selecionado */
+}
+
+
+
+
