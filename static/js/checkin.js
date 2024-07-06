@@ -1,16 +1,3 @@
-document.addEventListener('DOMContentLoaded', function() {
-    var tipoClienteSelect = document.getElementById('tipo_cliente');
-    var empresaInfo = document.getElementById('empresa_info');
-
-    tipoClienteSelect.addEventListener('change', function() {
-        if (this.value === 'empresa') {
-            empresaInfo.style.display = 'block';
-        } else {
-            empresaInfo.style.display = 'none';
-        }
-    });
-});
-
 function toggleHospedeFields() {
     const tipoHospede = document.getElementById('tipo_hospede').value;
     document.getElementById('individual_fields').style.display = tipoHospede === 'individual' ? 'block' : 'none';
@@ -31,7 +18,7 @@ function searchHospede() {
                 results.appendChild(li);
             });
             const addHospedeButton = document.createElement('li');
-            addHospedeButton.innerHTML = '<a href="{% url 'incluir_hospede_view' %}">Adicionar Novo Hóspede</a>';
+            addHospedeButton.innerHTML = `<a href="${incluirHospedeUrl}">Adicionar Novo Hóspede</a>`;
             results.appendChild(addHospedeButton);
         });
 }
@@ -65,7 +52,7 @@ function searchEmpresa() {
                 results.appendChild(li);
             });
             const addEmpresaButton = document.createElement('li');
-            addEmpresaButton.innerHTML = '<a href="{% url 'incluir_empresa_view' %}">Adicionar Nova Empresa</a>';
+            addEmpresaButton.innerHTML = `<a href="${incluirEmpresaUrl}">Adicionar Nova Empresa</a>`;
             results.appendChild(addEmpresaButton);
         });
 }
