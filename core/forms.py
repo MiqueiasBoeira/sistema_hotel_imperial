@@ -1,5 +1,5 @@
 from django import forms
-from .models import CheckinIndividual, CheckinEmpresa, Quarto, Hospede, Empresa
+from .models import CheckinIndividual, CheckinEmpresa, Quarto, Hospede, Empresa, Checkout
 
 
 class CheckinIndividualForm(forms.ModelForm):
@@ -43,3 +43,10 @@ class FinanceiroForm(forms.Form):
     data_inicial = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), required=True)
     data_final = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), required=True)
 
+class CheckoutForm(forms.ModelForm):
+    class Meta:
+        model = Checkout
+        fields = ['data_checkout', 'consumo', 'observacoes', 'metodo_pagamento', 'total_pago']
+        widgets = {
+            'data_checkout': forms.DateInput(attrs={'type': 'date'}),
+        }

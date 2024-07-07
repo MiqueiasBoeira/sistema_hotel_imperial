@@ -3,27 +3,61 @@
 
 {% block title %}Check-out{% endblock %}
 
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/checkout.css' %}">
+{% endblock %}
+
 {% block content %}
-<h1>Check-out</h1>
-<form method="post">
-    {% csrf_token %}
-    <label for="checkin_id">Selecione um Check-in:</label>
-    <select name="checkin_id" id="checkin_id" required>
-        <option value="">Selecione um Check-in</option>
-        {% for checkin in checkins %}
-        <option value="{{ checkin.id }}">Quarto {{ checkin.quarto.numero_quarto }} - {{ checkin.hospede_principal.nome_completo }}</option>
-        {% endfor %}
-    </select>
-    <div id="checkin-details"></div>
-    <input type="date" name="data_checkout" placeholder="Data de Check-out" required>
-    <input type="number" name="consumo" placeholder="Consumo" step="0.01" required>
-    <textarea name="observacoes" placeholder="Observações"></textarea>
-    <input type="text" name="metodo_pagamento" placeholder="Método de Pagamento" required>
-    <input type="number" name="total_pago" placeholder="Total Pago" step="0.01" required>
-    <button type="submit">Registrar Check-out</button>
-</form>
+<div class="checkout-container">
+    <h1>Check-out</h1>
+    <form method="post">
+        {% csrf_token %}
+        <label for="checkin_id">Selecione um Check-in:</label>
+        <select name="checkin_id" id="checkin_id" required>
+            <option value="">Selecione um Check-in</option>
+            {% for checkin in checkins_individuais %}
+            <option value="{{ checkin.id }}" data-checkin-tipo="individual">Quarto {{ checkin.quarto.numero_quarto }} - {{ checkin.hospede_principal.nome_completo }}</option>
+            {% endfor %}
+            {% for checkin in checkins_empresas %}
+            <option value="{{ checkin.id }}" data-checkin-tipo="empresa">Quarto {{ checkin.quarto.numero_quarto }} - {{ checkin.hospede_principal.nome_completo }}</option>
+            {% endfor %}
+        </select>
+        <input type="hidden" name="checkin_tipo" id="checkin_tipo">
+        <div id="checkin-details"></div>
+        <div class="flex-container">
+            <div class="flex-item">
+                <label for="data_checkout">Data de Check-out:</label>
+                <input type="date" name="data_checkout" required>
+            </div>
+            <div class="flex-item">
+                <label for="consumo">Consumo:</label>
+                <input type="number" name="consumo" step="0.01" required>
+            </div>
+            <div class="flex-item-full">
+                <label for="observacoes">Observações:</label>
+                <textarea name="observacoes"></textarea>
+            </div>
+            <div class="flex-item">
+                <label for="metodo_pagamento">Método de Pagamento:</label>
+                <input type="text" name="metodo_pagamento" required>
+            </div>
+            <div class="flex-item">
+                <label for="total_pago">Total Pago:</label>
+                <input type="number" name="total_pago" step="0.01" required>
+            </div>
+        </div>
+        <button type="submit">Registrar Check-out</button>
+    </form>
+</div>
 
 {% block extra_script %}
 <script src="{% static 'js/checkout.js' %}"></script>
+<script>
+    document.getElementById('checkin_id').addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        const checkinTipo = selectedOption.getAttribute('data-checkin-tipo');
+        document.getElementById('checkin_tipo').value = checkinTipo;
+    });
+</script>
 {% endblock %}
 {% endblock %}

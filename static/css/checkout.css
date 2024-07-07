@@ -1,0 +1,92 @@
+/* checkout.css */
+
+/* Container principal do formulário de check-out */
+.checkout-container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Título do formulário de check-out */
+.checkout-container h1 {
+    color: #D4AF37; /* Dourado */
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 2em;
+}
+
+/* Formulário de check-out */
+.checkout-container form {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Labels dos campos do formulário */
+.checkout-container label {
+    margin: 10px 0 5px;
+    font-weight: bold;
+}
+
+/* Inputs, selects e textareas */
+.checkout-container input[type="text"],
+.checkout-container input[type="date"],
+.checkout-container input[type="number"],
+.checkout-container select,
+.checkout-container textarea {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    width: 100%; /* Certifique-se de que todos os elementos tenham 100% da largura */
+    box-sizing: border-box; /* Inclui o padding e a borda na largura total */
+    font-size: 1em;
+}
+
+/* Botões */
+.checkout-container button,
+.checkout-container a.btn {
+    padding: 10px 20px;
+    background-color: #D4AF37; /* Dourado */
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+    margin-bottom: 15px; /* Adiciona espaçamento inferior */
+    font-size: 1em;
+    text-align: center;
+    text-decoration: none;
+}
+
+/* Hover para botões */
+.checkout-container button:hover,
+.checkout-container a.btn:hover {
+    background-color: #b88f2a; /* Dourado mais escuro */
+}
+
+/* Flexbox para alinhamento dos campos */
+.flex-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 15px; /* Adiciona espaçamento entre os itens */
+}
+
+.flex-item {
+    flex: 1 1 calc(50% - 15px); /* Permite que os itens cresçam e adiciona espaçamento entre eles */
+    margin-bottom: 15px; /* Espaçamento vertical */
+}
+
+.flex-item-full {
+    flex: 1 1 100%; /* Faz o item ocupar 100% da largura disponível */
+    margin-bottom: 15px; /* Espaçamento vertical */
+}
+
+/* Nova classe para garantir que um elemento ocupe uma linha inteira */
+.full-width {
+    flex: 1 1 100%;
+    margin-bottom: 15px; /* Espaçamento vertical */
+}

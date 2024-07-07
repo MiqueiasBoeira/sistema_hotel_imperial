@@ -1,7 +1,8 @@
 document.getElementById('checkin_id').addEventListener('change', function() {
     const checkinId = this.value;
     if (checkinId) {
-        fetch(`/get_checkin_details/${checkinId}/`)
+        const checkinTipo = document.getElementById('checkin_tipo').value;
+        fetch(`/get_checkin_details/${checkinId}/?checkin_tipo=${checkinTipo}`)
             .then(response => response.json())
             .then(data => {
                 const detailsDiv = document.getElementById('checkin-details');
@@ -21,7 +22,7 @@ document.getElementById('checkin_id').addEventListener('change', function() {
                     <p><strong>Telefone:</strong> ${data.hospede.telefone}</p>
                     <p><strong>Endereço:</strong> ${data.hospede.endereco}</p>
                     <p><strong>Tipo de Cliente:</strong> ${data.hospede.tipo_cliente}</p>
-                    ${data.hospede.empresa ? `<p><strong>Empresa:</strong> ${data.hospede.empresa.nome_empresa}</p>` : ''}
+                    ${data.hospede.empresa ? `<p><strong>Empresa:</strong> ${data.hospede.empresa}</p>` : ''}
                 `;
             })
             .catch(error => console.error('Error:', error));

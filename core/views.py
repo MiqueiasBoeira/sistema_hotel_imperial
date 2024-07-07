@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Quarto, Hospede, CheckinIndividual, CheckinEmpresa, Empresa, Checkout, Financeira, Reserva
-from .forms import CheckinIndividualForm, CheckinEmpresaForm, HospedeForm, EmpresaForm, FinanceiroForm
+from .forms import CheckinIndividualForm, CheckinEmpresaForm, HospedeForm, EmpresaForm, FinanceiroForm, CheckoutForm
 
 
 logger = logging.getLogger(__name__)
@@ -217,7 +217,6 @@ def search_empresa(request):
     return JsonResponse(results, safe=False)
 
 
-
 @login_required
 def checkout_view(request):
     checkins_individuais_ativos = CheckinIndividual.objects.filter(quarto__estado='ocupado').exclude(
@@ -226,45 +225,44 @@ def checkout_view(request):
         id__in=Checkout.objects.values('checkin_empresa_id'))
 
     if request.method == 'POST':
-        checkin_tipo = request.POST.get('checkin_tipo')
         checkin_id = request.POST.get('checkin_id')
-        consumo = request.POST['consumo']
-        observacoes = request.POST['observacoes']
-        metodo_pagamento = request.POST['metodo_pagamento']
-        total_pago = request.POST['total_pago']
-        data_checkout = request.POST['data_checkout']
+        checkin_tipo = request.POST.get('checkin_tipo')
+        form = CheckoutForm(request.POST)
 
-        if checkin_tipo == 'individual':
-            checkin = get_object_or_404(CheckinIndividual, id=checkin_id)
-        elif checkin_tipo == 'empresa':
-            checkin = get_object_or_404(CheckinEmpresa, id=checkin_id)
+        if form.is_valid():
+            checkout = form.save(commit=False)
+            if checkin_tipo == 'individual':
+                checkin = get_object_or_404(CheckinIndividual, id=checkin_id)
+                checkout.checkin_individual = checkin
+            elif checkin_tipo == 'empresa':
+                checkin = get_object_or_404(CheckinEmpresa, id=checkin_id)
+                checkout.checkin_empresa = checkin
 
-        checkout = Checkout.objects.create(
-            checkin_individual=checkin if checkin_tipo == 'individual' else None,
-            checkin_empresa=checkin if checkin_tipo == 'empresa' else None,
-            data_checkout=data_checkout,
-            consumo=consumo,
-            observacoes=observacoes,
-            metodo_pagamento=metodo_pagamento,
-            total_pago=total_pago
-        )
+            checkout.save()
 
-        Financeira.objects.create(
-            tipo='receita',
-            descricao=f'Checkout do quarto {checkin.quarto.numero_quarto}',
-            valor=total_pago,
-            data=data_checkout
-        )
+            # Atualiza o estado do quarto
+            quarto = checkin.quarto
+            quarto.estado = 'livre'
+            quarto.save()
 
-        quarto = checkin.quarto
-        quarto.estado = 'livre'
-        quarto.save()
+            # Adiciona o registro financeiro
+            Financeira.objects.create(
+                tipo='receita',
+                descricao=f'Checkout do quarto {checkin.quarto.numero_quarto}',
+                valor=checkout.total_pago,
+                data=checkout.data_checkout
+            )
 
-        return redirect('pagina_inicial')
+            messages.success(request, 'Check-out realizado com sucesso.')
+            return redirect('pagina_inicial')
+        else:
+            messages.error(request, 'Erro ao realizar check-out. Verifique os dados e tente novamente.')
 
-    return render(request, 'core/checkout.html',
-                  {'checkins_individuais': checkins_individuais_ativos, 'checkins_empresas': checkins_empresas_ativos})
-
+    return render(request, 'core/checkout.html', {
+        'checkins_individuais': checkins_individuais_ativos,
+        'checkins_empresas': checkins_empresas_ativos,
+        'form': CheckoutForm()
+    })
 
 @login_required
 def reserva_view(request):
