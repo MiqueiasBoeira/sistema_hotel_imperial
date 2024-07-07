@@ -1,4 +1,3 @@
-<!-- quarto_detalhes.html -->
 {% extends 'core/base.html' %}
 
 {% block title %}Quarto {{ quarto.numero_quarto }}{% endblock %}
@@ -14,18 +13,59 @@
         <p><strong>E-mail:</strong> {{ quarto.hospede.email }}</p>
         <p><strong>Telefone:</strong> {{ quarto.hospede.telefone }}</p>
         <p><strong>Endereço:</strong> {{ quarto.hospede.endereco }}</p>
-        <p><strong>Tipo de Cliente:</strong> {{ quarto.hospede.tipo_cliente }}</p>
-        {% if quarto.hospede.tipo_cliente == 'empresa' %}
-            <p><strong>Empresa:</strong> {{ quarto.hospede.empresa.nome_empresa }}</p>
+        {% if quarto.tipo_checkin == 'empresa' %}
+            <p><strong>Empresa:</strong> {{ quarto.checkin_empresa.empresa.nome_empresa }}</p>
         {% endif %}
         <h3>Check-in</h3>
-        <p><strong>Data de Check-in:</strong> {{ quarto.checkin.data_checkin }}</p>
-        <p><strong>Data de Check-out:</strong> {{ quarto.checkin.data_checkout }}</p>
-        <p><strong>Diária:</strong> {{ quarto.checkin.diaria }}</p>
-        <p><strong>Número de Dias:</strong> {{ quarto.checkin.num_dias }}</p>
-        <p><strong>Companhia:</strong> {{ quarto.checkin.companhia }}</p>
-        <p><strong>Motivo da Viagem:</strong> {{ quarto.checkin.motivo_viagem }}</p>
-        <p><strong>Acompanhantes:</strong> {{ quarto.checkin.acompanhantes }}</p>
+        <p><strong>Data de Check-in:</strong>
+            {% if quarto.checkin_individual %}
+                {{ quarto.checkin_individual.data_checkin }}
+            {% else %}
+                {{ quarto.checkin_empresa.data_checkin }}
+            {% endif %}
+        </p>
+        <p><strong>Data de Check-out:</strong>
+            {% if quarto.checkin_individual %}
+                {{ quarto.checkin_individual.data_checkout }}
+            {% else %}
+                {{ quarto.checkin_empresa.data_checkout }}
+            {% endif %}
+        </p>
+        <p><strong>Diária:</strong>
+            {% if quarto.checkin_individual %}
+                {{ quarto.checkin_individual.diaria }}
+            {% else %}
+                {{ quarto.checkin_empresa.diaria }}
+            {% endif %}
+        </p>
+        <p><strong>Número de Dias:</strong>
+            {% if quarto.checkin_individual %}
+                {{ quarto.checkin_individual.num_dias }}
+            {% else %}
+                {{ quarto.checkin_empresa.num_dias }}
+            {% endif %}
+        </p>
+        <p><strong>Companhia:</strong>
+            {% if quarto.checkin_individual %}
+                {{ quarto.checkin_individual.companhia }}
+            {% else %}
+                {{ quarto.checkin_empresa.companhia }}
+            {% endif %}
+        </p>
+        <p><strong>Motivo da Viagem:</strong>
+            {% if quarto.checkin_individual %}
+                {{ quarto.checkin_individual.motivo_viagem }}
+            {% else %}
+                {{ quarto.checkin_empresa.motivo_viagem }}
+            {% endif %}
+        </p>
+        <p><strong>Acompanhantes:</strong>
+            {% if quarto.checkin_individual %}
+                {{ quarto.checkin_individual.acompanhantes }}
+            {% else %}
+                {{ quarto.checkin_empresa.acompanhantes }}
+            {% endif %}
+        </p>
     </div>
 {% else %}
     <p>O quarto está atualmente livre.</p>

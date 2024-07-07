@@ -20,8 +20,25 @@
             <p class="room-status">Estado: {{ quarto.estado }}</p>
 
             {% if quarto.estado == 'ocupado' %}
-            <p class="room-guest">Hóspede: {{ quarto.hospede.nome_completo }}</p>
-            <p class="room-dates">Check-in: {{ quarto.checkin.data_checkin }} | Check-out: {{ quarto.checkin.data_checkout }}</p>
+                <p class="room-guest">Hóspede: {{ quarto.hospede.nome_completo }}</p>
+                {% if quarto.tipo_checkin == 'empresa' %}
+                    <p class="room-company">Empresa: {{ quarto.empresa.nome_empresa }}</p>
+                {% endif %}
+                <p class="room-dates">
+                    Check-in:
+                    {% if quarto.checkin_individual %}
+                        {{ quarto.checkin_individual.data_checkin }}
+                    {% else %}
+                        {{ quarto.checkin_empresa.data_checkin }}
+                    {% endif %}
+                    |
+                    Check-out:
+                    {% if quarto.checkin_individual %}
+                        {{ quarto.checkin_individual.data_checkout }}
+                    {% else %}
+                        {{ quarto.checkin_empresa.data_checkout }}
+                    {% endif %}
+                </p>
             {% endif %}
 
         </div>

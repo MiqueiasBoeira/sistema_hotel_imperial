@@ -37,6 +37,7 @@
 
 .room-status,
 .room-guest,
+.room-company,
 .room-dates {
     font-size: 1em;
     color: #666666; /* Tom de cinza para textos */

@@ -23,25 +23,13 @@ def login_view(request):
         else:
             return render(request, 'core/login.html', {'error': 'Usuário ou senha inválidos'})
     return render(request, 'core/login.html')
-
-
 @login_required
 def pagina_inicial(request):
     quartos = Quarto.objects.select_related('hospede', 'checkin_individual', 'checkin_empresa').all()
+
     for quarto in quartos:
-        hospede = quarto.hospede.nome_completo if quarto.hospede else "None"
-        data_checkin = "None"
-        data_checkout = "None"
-
-        if quarto.checkin_individual:
-            data_checkin = quarto.checkin_individual.data_checkin
-            data_checkout = quarto.checkin_individual.data_checkout
-        elif quarto.checkin_empresa:
-            data_checkin = quarto.checkin_empresa.data_checkin
-            data_checkout = quarto.checkin_empresa.data_checkout
-
-        print(
-            f'Quarto {quarto.numero_quarto} - Hóspede: {hospede} - Check-in: {data_checkin} - Check-out: {data_checkout}')
+        if quarto.checkin_empresa:
+            quarto.empresa = quarto.checkin_empresa.empresa
 
     context = {
         'quartos': quartos
@@ -291,7 +279,6 @@ def reserva_view(request):
     hospedes = Hospede.objects.all()
     quartos = Quarto.objects.all()
     return render(request, 'core/reserva.html', {'hospedes': hospedes, 'quartos': quartos})
-
 
 @login_required
 def quarto_detalhes(request, id):
