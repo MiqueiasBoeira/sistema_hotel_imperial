@@ -116,6 +116,8 @@ def excluir_empresa_view(request, pk):
         return redirect('gerenciar_empresas_view')
     return render(request, 'core/excluir_empresa_confirm.html', {'empresa': empresa})
 
+logger = logging.getLogger(__name__)
+
 
 @login_required
 def checkin_view(request):
@@ -125,49 +127,68 @@ def checkin_view(request):
 
     if request.method == 'POST':
         tipo_hospede = request.POST.get('tipo_hospede')
-        form_individual = None
-        form_empresa = None
+
         if tipo_hospede == 'individual':
             form_individual = CheckinIndividualForm(request.POST)
             if form_individual.is_valid():
                 checkin = form_individual.save(commit=False)
-                hospede_id = request.POST.get('selected_hospede_id')
-                if hospede_id:
-                    hospede_principal = get_object_or_404(Hospede, id=hospede_id)
-                    checkin.hospede_principal = hospede_principal
-                    checkin.save()
-                    hospedes_secundarios = form_individual.cleaned_data['hospedes_secundarios']
-                    checkin.hospedes_secundarios.set(hospedes_secundarios)
-                    quarto = checkin.quarto
-                    quarto.estado = 'ocupado'
-                    quarto.checkin_individual = checkin
-                    quarto.tipo_checkin = 'individual'
-                    quarto.save()
-                    return redirect('pagina_inicial')
-                else:
-                    form_individual.add_error(None, 'Selecione um hóspede principal')
+                hospede_principal_id = request.POST.get('selected_hospede_id')
+                hospede_principal = get_object_or_404(Hospede, id=hospede_principal_id)
+                checkin.hospede_principal = hospede_principal
+                checkin.save()
+
+                # Obter IDs dos hóspedes secundários
+                hospedes_secundarios_ids = request.POST.getlist('hospedes_secundarios_ids')
+
+                # Filtrar IDs não vazios e remover o ID do hóspede principal
+                hospedes_secundarios_ids = [id for id in hospedes_secundarios_ids if id and id != str(hospede_principal.id)]
+
+                hospedes_secundarios = Hospede.objects.filter(id__in=hospedes_secundarios_ids)
+                checkin.hospedes_secundarios.set(hospedes_secundarios)
+
+                # Atualiza o estado do quarto
+                quarto = checkin.quarto
+                quarto.estado = 'ocupado'
+                quarto.checkin_individual = checkin
+                quarto.tipo_checkin = 'individual'
+                quarto.save()
+
+                messages.success(request, 'Check-in realizado com sucesso.')
+                return redirect('pagina_inicial')
+            else:
+                messages.error(request, 'Erro ao realizar check-in individual. Verifique os dados e tente novamente.')
+
         elif tipo_hospede == 'empresa':
             form_empresa = CheckinEmpresaForm(request.POST)
             if form_empresa.is_valid():
                 checkin = form_empresa.save(commit=False)
-                empresa_id = request.POST.get('selected_empresa_id')
-                hospede_id = request.POST.get('selected_hospede_empresa_id')
-                if empresa_id and hospede_id:
-                    empresa = get_object_or_404(Empresa, id=empresa_id)
-                    hospede_principal = get_object_or_404(Hospede, id=hospede_id)
-                    checkin.empresa = empresa
-                    checkin.hospede_principal = hospede_principal
-                    checkin.save()
-                    hospedes_secundarios = form_empresa.cleaned_data['hospedes_secundarios']
-                    checkin.hospedes_secundarios.set(hospedes_secundarios)
-                    quarto = checkin.quarto
-                    quarto.estado = 'ocupado'
-                    quarto.checkin_empresa = checkin
-                    quarto.tipo_checkin = 'empresa'
-                    quarto.save()
-                    return redirect('pagina_inicial')
-                else:
-                    form_empresa.add_error(None, 'Selecione uma empresa e um hóspede principal para a empresa')
+                empresa = get_object_or_404(Empresa, id=request.POST.get('selected_empresa_id'))
+                hospede_principal = get_object_or_404(Hospede, id=request.POST.get('selected_hospede_empresa_id'))
+                checkin.empresa = empresa
+                checkin.hospede_principal = hospede_principal
+                checkin.save()
+
+                # Obter IDs dos hóspedes secundários
+                hospedes_secundarios_ids = request.POST.getlist('hospedes_secundarios_ids')
+
+                # Filtrar IDs não vazios e remover o ID do hóspede principal
+                hospedes_secundarios_ids = [id for id in hospedes_secundarios_ids if id and id != str(hospede_principal.id)]
+
+                hospedes_secundarios = Hospede.objects.filter(id__in=hospedes_secundarios_ids)
+                checkin.hospedes_secundarios.set(hospedes_secundarios)
+
+                # Atualiza o estado do quarto
+                quarto = checkin.quarto
+                quarto.estado = 'ocupado'
+                quarto.checkin_empresa = checkin
+                quarto.tipo_checkin = 'empresa'
+                quarto.save()
+
+                messages.success(request, 'Check-in empresarial realizado com sucesso.')
+                return redirect('pagina_inicial')
+            else:
+                messages.error(request, 'Erro ao realizar check-in empresarial. Verifique os dados e tente novamente.')
+
     else:
         form_individual = CheckinIndividualForm()
         form_empresa = CheckinEmpresaForm()
@@ -179,7 +200,6 @@ def checkin_view(request):
         'empresas': empresas,
         'quartos': quartos_livres
     })
-
 
 
 @login_required

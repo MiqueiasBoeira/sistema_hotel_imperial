@@ -25,7 +25,6 @@ function searchHospede() {
             });
         });
 }
-
 function selectHospede(id, nome_completo) {
     document.getElementById('search_hospede').value = nome_completo;
     document.getElementById('selected_hospede_id').value = id;
@@ -121,26 +120,68 @@ function confirmHospedeEmpresaSelection(button) {
 function addIndividualHospedeField() {
     const hospedeFields = document.getElementById('individual_hospede_fields');
     const newField = document.createElement('div');
+    newField.classList.add('hospede-secundario-field');
     newField.innerHTML = `
-        <label for="hospede_secundario">Hóspede Secundário:</label>
-        <select name="hospede_secundario">
-            {% for hospede in hospedes %}
-                <option value="{{ hospede.id }}">{{ hospede.nome_completo }}</option>
-            {% endfor %}
-        </select>
+        <input type="text" class="search_hospede_secundario" oninput="searchHospedeSecundario(this)">
+        <ul class="search_hospede_secundario_results"></ul>
+        <input type="hidden" class="selected_hospede_secundario_id" name="hospedes_secundarios_ids">
+        <button type="button" onclick="confirmHospedeSecundarioSelection(this)">Confirmar Hóspede Secundário</button>
     `;
     hospedeFields.appendChild(newField);
 }
 
+
 function addEmpresaHospedeField() {
     const hospedeFields = document.getElementById('empresa_hospede_fields');
     const newField = document.createElement('div');
+    newField.classList.add('hospede-secundario-field');
     newField.innerHTML = `
-        <label for="hospede_empresa">Hóspede da Empresa:</label>
-        <input type="text" class="search_hospede_empresa" name="search_hospede_empresa" oninput="searchHospedeEmpresa(this)">
-        <ul class="search_empresa_results"></ul>
-        <input type="hidden" class="selected_hospede_empresa_id" name="selected_hospede_empresa_id">
-        <button type="button" onclick="confirmHospedeEmpresaSelection(this)">Confirmar Hóspede da Empresa</button>
+        <input type="text" class="search_hospede_secundario" oninput="searchHospedeSecundario(this)">
+        <ul class="search_hospede_secundario_results"></ul>
+        <input type="hidden" class="selected_hospede_secundario_id" name="hospedes_secundarios_ids">
+        <button type="button" onclick="confirmHospedeSecundarioSelection(this)">Confirmar Hóspede Secundário</button>
     `;
     hospedeFields.appendChild(newField);
+}
+
+
+function searchHospedeSecundario(input) {
+    const query = input.value.trim();
+    if (query === "") {
+        input.nextElementSibling.innerHTML = '';
+        return;
+    }
+
+    fetch(`/search_hospede/?q=${query}`)
+        .then(response => response.json())
+        .then(data => {
+            const results = input.nextElementSibling;
+            results.innerHTML = '';
+            data.forEach(hospede => {
+                const li = document.createElement('li');
+                li.textContent = `${hospede.nome_completo} - ${hospede.cpf}`;
+                li.onclick = (event) => selectHospedeSecundario(hospede.id, hospede.nome_completo, input, event);
+                results.appendChild(li);
+            });
+        });
+}
+
+
+function selectHospedeSecundario(id, nome_completo, input, event) {
+    input.value = nome_completo;
+    input.nextElementSibling.nextElementSibling.value = id;
+    const results = input.nextElementSibling;
+    Array.from(results.children).forEach(child => child.classList.remove('selected'));
+    event.target.classList.add('selected');
+    results.innerHTML = '';
+}
+
+
+function confirmHospedeSecundarioSelection(button) {
+    const selectedHospedeSecundarioId = button.previousElementSibling.value;
+    if (selectedHospedeSecundarioId) {
+        alert("Hóspede secundário selecionado com sucesso!");
+    } else {
+        alert("Por favor, selecione um hóspede secundário.");
+    }
 }

@@ -1,3 +1,4 @@
+<!-- checkin.html -->
 {% extends 'core/base.html' %}
 {% load static %}
 {% block title %}Check-in{% endblock %}
@@ -20,7 +21,7 @@
         <div id="individual_fields" style="display:block;">
             <label for="search_hospede">Pesquisar Hóspede:</label>
             <input type="text" id="search_hospede" name="search_hospede" oninput="searchHospede()">
-            <ul id="search_results"></ul>
+            <ul id="search_results" class="search-results"></ul>
             <input type="hidden" id="selected_hospede_id" name="selected_hospede_id">
             <button type="button" onclick="confirmHospedeSelection()">Confirmar Hóspede</button>
             <a href="{% url 'incluir_hospede_view' %}" class="btn">Incluir Hóspede</a>
@@ -31,37 +32,66 @@
         <div id="empresa_fields" style="display:none;">
             <label for="search_empresa">Pesquisar Empresa:</label>
             <input type="text" id="search_empresa" name="search_empresa" oninput="searchEmpresa()">
-            <ul id="search_empresa_results"></ul>
+            <ul id="search_empresa_results" class="search-results"></ul>
             <input type="hidden" id="selected_empresa_id" name="selected_empresa_id">
             <button type="button" onclick="confirmEmpresaSelection()">Confirmar Empresa</button>
             <a href="{% url 'incluir_empresa_view' %}" class="btn">Incluir Empresa</a>
 
-            <label for="search_hospede_empresa">Pesquisar Hóspede Principal:</label>
-            <input type="text" id="search_hospede_empresa" name="search_hospede_empresa" oninput="searchHospedeEmpresa(this)">
-            <ul id="search_hospede_empresa_results"></ul>
-            <input type="hidden" id="selected_hospede_empresa_id" name="selected_hospede_empresa_id">
+            <div class="full-width">
+                <label for="search_hospede_empresa">Pesquisar Hóspede Principal:</label>
+                <input type="text" id="search_hospede_empresa" name="search_hospede_empresa" oninput="searchHospedeEmpresa(this)">
+                <ul id="search_hospede_empresa_results" class="search-results"></ul>
+                <input type="hidden" id="selected_hospede_empresa_id" name="selected_hospede_empresa_id">
+            </div>
             <button type="button" onclick="confirmHospedeEmpresaSelection(this)">Confirmar Hóspede Principal</button>
-
-            <button type="button" onclick="addEmpresaHospedeField()">Adicionar Hóspede</button>
+            <button type="button" onclick="addEmpresaHospedeField()">Adicionar Hóspede Secundário</button>
             <div id="empresa_hospede_fields"></div>
         </div>
 
-        <div>
-            <label for="quarto">Quarto:</label>
-            <select name="quarto" id="quarto">
-                {% for quarto in quartos %}
-                    <option value="{{ quarto.id }}">{{ quarto.numero_quarto }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div>
-            {{ form_individual.data_checkin.label_tag }} {{ form_individual.data_checkin }}
-            {{ form_individual.data_checkout.label_tag }} {{ form_individual.data_checkout }}
-            {{ form_individual.diaria.label_tag }} {{ form_individual.diaria }}
-            {{ form_individual.num_dias.label_tag }} {{ form_individual.num_dias }}
-            {{ form_individual.companhia.label_tag }} {{ form_individual.companhia }}
-            {{ form_individual.motivo_viagem.label_tag }} {{ form_individual.motivo_viagem }}
-            {{ form_individual.acompanhantes.label_tag }} {{ form_individual.acompanhantes }}
+        <div class="flex-container">
+            <div class="flex-item">
+                <label for="quarto">Quarto:</label>
+                <select name="quarto" id="quarto">
+                    {% for quarto in quartos %}
+                        <option value="{{ quarto.id }}">{{ quarto.numero_quarto }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="flex-item">
+                <label for="data_checkin">Data check-in:</label>
+                <input type="date" id="data_checkin" name="data_checkin">
+            </div>
+
+            <div class="flex-item">
+                <label for="data_checkout">Data check-out:</label>
+                <input type="date" id="data_checkout" name="data_checkout">
+            </div>
+
+            <div class="flex-item">
+                <label for="diaria">Diária:</label>
+                <input type="text" id="diaria" name="diaria">
+            </div>
+
+            <div class="flex-item">
+                <label for="num_dias">Num dias:</label>
+                <input type="text" id="num_dias" name="num_dias">
+            </div>
+
+            <div class="flex-item">
+                <label for="companhia">Companhia:</label>
+                <input type="text" id="companhia" name="companhia">
+            </div>
+
+            <div class="flex-item-full">
+                <label for="motivo_viagem">Motivo viagem:</label>
+                <input type="text" id="motivo_viagem" name="motivo_viagem">
+            </div>
+
+            <div class="flex-item-full">
+                <label for="acompanhantes">Acompanhantes:</label>
+                <textarea id="acompanhantes" name="acompanhantes"></textarea>
+            </div>
         </div>
 
         <button type="submit">Registrar Check-in</button>

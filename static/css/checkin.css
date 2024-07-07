@@ -1,5 +1,6 @@
 /* checkin.css */
 
+/* Container principal do formulário de check-in */
 .checkin-container {
     max-width: 800px;
     margin: 20px auto;
@@ -9,6 +10,7 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+/* Título do formulário de check-in */
 .checkin-container h1 {
     color: #D4AF37; /* Dourado */
     text-align: center;
@@ -16,16 +18,19 @@
     font-size: 2em;
 }
 
+/* Formulário de check-in */
 .checkin-container form {
     display: flex;
     flex-direction: column;
 }
 
+/* Labels dos campos do formulário */
 .checkin-container label {
     margin: 10px 0 5px;
     font-weight: bold;
 }
 
+/* Inputs, selects e textareas */
 .checkin-container input[type="text"],
 .checkin-container input[type="date"],
 .checkin-container select,
@@ -39,7 +44,7 @@
     font-size: 1em;
 }
 
-
+/* Botões */
 .checkin-container button,
 .checkin-container a.btn {
     padding: 10px 20px;
@@ -49,17 +54,21 @@
     border-radius: 4px;
     cursor: pointer;
     margin-top: 10px;
+    margin-bottom: 15px; /* Adiciona espaçamento inferior */
     font-size: 1em;
     text-align: center;
     text-decoration: none;
 }
 
+/* Hover para botões */
 .checkin-container button:hover,
 .checkin-container a.btn:hover {
     background-color: #b88f2a; /* Dourado mais escuro */
 }
 
-.checkin-container .search-results {
+/* Resultados de busca */
+.checkin-container .search-results,
+.checkin-container .search_hospede_secundario_results {
     list-style-type: none;
     padding: 0;
     margin: 10px 0;
@@ -69,66 +78,64 @@
     overflow-y: auto;
 }
 
-.checkin-container .search-results li {
+/* Itens dos resultados de busca */
+.checkin-container .search-results li,
+.checkin-container .search_hospede_secundario_results li {
     padding: 10px;
     cursor: pointer;
     border-bottom: 1px solid #ccc;
 }
 
-.checkin-container .search-results li:last-child {
+/* Remover borda do último item */
+.checkin-container .search-results li:last-child,
+.checkin-container .search_hospede_secundario_results li:last-child {
     border-bottom: none;
 }
 
-.checkin-container .search-results li:hover {
+/* Hover para itens de resultados de busca */
+.checkin-container .search-results li:hover,
+.checkin-container .search_hospede_secundario_results li:hover {
     background-color: #f0f0f0;
-}
-
-.checkin-container .search-results li a {
     color: #D4AF37;
-    text-decoration: none;
 }
 
-.checkin-container .search-results li a:hover {
-    text-decoration: underline;
+/* Itens selecionados */
+.checkin-container .search-results li.selected,
+.checkin-container .search_hospede_secundario_results li.selected {
+    background-color: #d4af37; /* Cor de fundo para o item selecionado */
+    color: #fff; /* Cor do texto para o item selecionado */
 }
 
-.checkin-container .btn {
-    padding: 10px 20px;
-    background-color: #D4AF37; /* Dourado */
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
+/* Campos de hóspedes secundários */
+.hospede-secundario-field {
+    margin-bottom: 20px;
+}
+
+.hospede-secundario-field input[type="text"],
+.hospede-secundario-field button {
     margin-top: 10px;
-    font-size: 1em;
-    text-align: center;
-    text-decoration: none;
 }
 
-.checkin-container .btn:hover {
-    background-color: #b88f2a; /* Dourado mais escuro */
+/* Flexbox para alinhamento dos campos */
+.flex-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 15px; /* Adiciona espaçamento entre os itens */
 }
 
-.checkin-container #search_results li,
-.checkin-container #search_empresa_results li {
-    list-style-type: none;
-    padding: 10px;
-    cursor: pointer;  /* Altera o cursor para pointer */
-    border-bottom: 1px solid #ccc;
+.flex-item {
+    flex: 1 1 calc(50% - 15px); /* Permite que os itens cresçam e adiciona espaçamento entre eles */
+    margin-bottom: 15px; /* Espaçamento vertical */
 }
 
-.checkin-container #search_results li:hover,
-.checkin-container #search_empresa_results li:hover {
-    background-color: #f0f0f0;
-    color: #D4AF37;
+.flex-item-full {
+    flex: 1 1 100%; /* Faz o item ocupar 100% da largura disponível */
+    margin-bottom: 15px; /* Espaçamento vertical */
 }
 
-.checkin-container #search-results li.selected ,
-.checkin-container #search_empresa_results li.selected {
-    background-color: #d4af37;  /* Cor de fundo para o item selecionado */
-    color: #fff;  /* Cor do texto para o item selecionado */
+/* Nova classe para garantir que um elemento ocupe uma linha inteira */
+.full-width {
+    flex: 1 1 100%;
+    margin-bottom: 15px; /* Espaçamento vertical */
 }
-
-
-
-
