@@ -1,6 +1,7 @@
 from django import forms
 from .models import CheckinIndividual, CheckinEmpresa, Quarto, Hospede, Empresa
 
+
 class CheckinIndividualForm(forms.ModelForm):
     selected_hospede_id = forms.IntegerField(required=False, widget=forms.HiddenInput())
     acompanhantes = forms.CharField(widget=forms.Textarea, required=False)
@@ -27,7 +28,6 @@ class CheckinEmpresaForm(forms.ModelForm):
             'data_checkin': forms.DateInput(attrs={'type': 'date'}),
             'data_checkout': forms.DateInput(attrs={'type': 'date'}),
         }
-
 class HospedeForm(forms.ModelForm):
     class Meta:
         model = Hospede

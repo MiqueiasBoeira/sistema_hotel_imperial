@@ -1,16 +1,14 @@
+import logging
 from django.http import JsonResponse
+from django.contrib import messages
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Quarto, Hospede, CheckinIndividual, CheckinEmpresa, Empresa, Checkout, Financeira, Reserva
-
-from django.contrib.auth.decorators import login_required, permission_required
-from django.contrib import messages
 from .forms import CheckinIndividualForm, CheckinEmpresaForm, HospedeForm, EmpresaForm, FinanceiroForm
-import logging
+
 
 logger = logging.getLogger(__name__)
-
-
 
 def login_view(request):
     if request.method == 'POST':
@@ -25,16 +23,22 @@ def login_view(request):
     return render(request, 'core/login.html')
 @login_required
 def pagina_inicial(request):
-    quartos = Quarto.objects.select_related('hospede', 'checkin_individual', 'checkin_empresa').all()
-
-    for quarto in quartos:
-        if quarto.checkin_empresa:
-            quarto.empresa = quarto.checkin_empresa.empresa
-
+    quartos = Quarto.objects.select_related('checkin_individual__hospede_principal', 'checkin_empresa__hospede_principal', 'checkin_empresa__empresa').all()
     context = {
         'quartos': quartos
     }
     return render(request, 'core/pagina_inicial.html', context)
+
+@login_required
+def quarto_detalhes(request, id):
+    quarto = get_object_or_404(Quarto, id=id)
+    reservas = quarto.reservas.filter(status='ativo')
+
+    context = {
+        'quarto': quarto,
+        'reservas': reservas
+    }
+    return render(request, 'core/quarto_detalhes.html', context)
 
 
 @login_required
@@ -112,11 +116,6 @@ def excluir_empresa_view(request, pk):
         return redirect('gerenciar_empresas_view')
     return render(request, 'core/excluir_empresa_confirm.html', {'empresa': empresa})
 
-from django.shortcuts import render, redirect, get_object_or_404
-from .models import Quarto, Hospede, CheckinIndividual, CheckinEmpresa, Empresa, Checkout, Financeira, Reserva
-from django.contrib.auth.decorators import login_required, permission_required
-from .forms import CheckinIndividualForm, CheckinEmpresaForm, HospedeForm, EmpresaForm, FinanceiroForm
-from django.http import JsonResponse
 
 @login_required
 def checkin_view(request):
@@ -142,7 +141,6 @@ def checkin_view(request):
                     quarto = checkin.quarto
                     quarto.estado = 'ocupado'
                     quarto.checkin_individual = checkin
-                    quarto.hospede = hospede_principal
                     quarto.tipo_checkin = 'individual'
                     quarto.save()
                     return redirect('pagina_inicial')
@@ -165,7 +163,6 @@ def checkin_view(request):
                     quarto = checkin.quarto
                     quarto.estado = 'ocupado'
                     quarto.checkin_empresa = checkin
-                    quarto.hospede = hospede_principal
                     quarto.tipo_checkin = 'empresa'
                     quarto.save()
                     return redirect('pagina_inicial')
@@ -182,6 +179,8 @@ def checkin_view(request):
         'empresas': empresas,
         'quartos': quartos_livres
     })
+
+
 
 @login_required
 def search_hospede(request):
@@ -279,24 +278,6 @@ def reserva_view(request):
     hospedes = Hospede.objects.all()
     quartos = Quarto.objects.all()
     return render(request, 'core/reserva.html', {'hospedes': hospedes, 'quartos': quartos})
-
-@login_required
-def quarto_detalhes(request, id):
-    quarto = get_object_or_404(Quarto, id=id)
-    reservas = quarto.reservas.filter(status='ativo')
-
-    if request.method == 'POST' and 'cancelar_reserva' in request.POST:
-        reserva_id = request.POST['reserva_id']
-        reserva = get_object_or_404(Reserva, id=reserva_id)
-        reserva.status = 'cancelado'
-        reserva.save()
-        return redirect('quarto_detalhes', id=quarto.id)
-
-    context = {
-        'quarto': quarto,
-        'reservas': reservas
-    }
-    return render(request, 'core/quarto_detalhes.html', context)
 
 
 @login_required

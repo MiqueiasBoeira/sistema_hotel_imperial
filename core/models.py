@@ -23,13 +23,13 @@ class Hospede(models.Model):
 class Quarto(models.Model):
     numero_quarto = models.CharField(max_length=10)
     estado = models.CharField(max_length=10, choices=[('livre', 'Livre'), ('ocupado', 'Ocupado'), ('reservado', 'Reservado')])
-    hospede = models.ForeignKey(Hospede, null=True, blank=True, on_delete=models.SET_NULL, related_name='quartos')
     checkin_individual = models.OneToOneField('CheckinIndividual', null=True, blank=True, on_delete=models.SET_NULL, related_name='quarto_checkin_individual')
     checkin_empresa = models.OneToOneField('CheckinEmpresa', null=True, blank=True, on_delete=models.SET_NULL, related_name='quarto_checkin_empresa')
     tipo_checkin = models.CharField(max_length=10, choices=[('individual', 'Individual'), ('empresa', 'Empresa')], null=True, blank=True)
 
     def __str__(self):
         return self.numero_quarto
+
 
 class CheckinIndividual(models.Model):
     hospede_principal = models.ForeignKey(Hospede, on_delete=models.CASCADE, related_name='checkins_individual')
