@@ -17,7 +17,7 @@
             <option value="empresa">Empresa</option>
         </select>
 
-        <div id="individual_fields" style="display:block;" data-incluir-hospede-url="{% url 'incluir_hospede_view' %}">
+        <div id="individual_fields" style="display:block;">
             <label for="search_hospede">Pesquisar Hóspede:</label>
             <input type="text" id="search_hospede" name="search_hospede" oninput="searchHospede()">
             <ul id="search_results"></ul>
@@ -28,15 +28,21 @@
             <div id="individual_hospede_fields"></div>
         </div>
 
-        <div id="empresa_fields" style="display:none;" data-incluir-empresa-url="{% url 'incluir_empresa_view' %}">
+        <div id="empresa_fields" style="display:none;">
             <label for="search_empresa">Pesquisar Empresa:</label>
             <input type="text" id="search_empresa" name="search_empresa" oninput="searchEmpresa()">
             <ul id="search_empresa_results"></ul>
             <input type="hidden" id="selected_empresa_id" name="selected_empresa_id">
             <button type="button" onclick="confirmEmpresaSelection()">Confirmar Empresa</button>
             <a href="{% url 'incluir_empresa_view' %}" class="btn">Incluir Empresa</a>
+
+            <label for="search_hospede_empresa">Pesquisar Hóspede Principal:</label>
+            <input type="text" id="search_hospede_empresa" name="search_hospede_empresa" oninput="searchHospedeEmpresa(this)">
+            <ul id="search_hospede_empresa_results"></ul>
+            <input type="hidden" id="selected_hospede_empresa_id" name="selected_hospede_empresa_id">
+            <button type="button" onclick="confirmHospedeEmpresaSelection(this)">Confirmar Hóspede Principal</button>
+
             <button type="button" onclick="addEmpresaHospedeField()">Adicionar Hóspede</button>
-            <a href="{% url 'incluir_hospede_view' %}" class="btn">Incluir Hóspede</a>
             <div id="empresa_hospede_fields"></div>
         </div>
 
@@ -48,13 +54,15 @@
                 {% endfor %}
             </select>
         </div>
-        {{ form.data_checkin.label_tag }} <input type="date" name="data_checkin" id="id_data_checkin">
-        {{ form.data_checkout.label_tag }} <input type="date" name="data_checkout" id="id_data_checkout">
-        {{ form.diaria.label_tag }} {{ form.diaria }}
-        {{ form.num_dias.label_tag }} {{ form.num_dias }}
-        {{ form.companhia.label_tag }} {{ form.companhia }}
-        {{ form.motivo_viagem.label_tag }} {{ form.motivo_viagem }}
-        {{ form.acompanhantes.label_tag }} {{ form.acompanhantes }}
+        <div>
+            {{ form_individual.data_checkin.label_tag }} {{ form_individual.data_checkin }}
+            {{ form_individual.data_checkout.label_tag }} {{ form_individual.data_checkout }}
+            {{ form_individual.diaria.label_tag }} {{ form_individual.diaria }}
+            {{ form_individual.num_dias.label_tag }} {{ form_individual.num_dias }}
+            {{ form_individual.companhia.label_tag }} {{ form_individual.companhia }}
+            {{ form_individual.motivo_viagem.label_tag }} {{ form_individual.motivo_viagem }}
+            {{ form_individual.acompanhantes.label_tag }} {{ form_individual.acompanhantes }}
+        </div>
 
         <button type="submit">Registrar Check-in</button>
     </form>

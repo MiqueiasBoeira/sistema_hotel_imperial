@@ -1,10 +1,11 @@
 from django.http import JsonResponse
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Quarto, Hospede, Checkin, Empresa, Checkout, Financeira, Reserva
+from .models import Quarto, Hospede, CheckinIndividual, CheckinEmpresa, Empresa, Checkout, Financeira, Reserva
+
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
-from .forms import CheckinForm, HospedeForm, EmpresaForm, FinanceiroForm
+from .forms import CheckinIndividualForm, CheckinEmpresaForm, HospedeForm, EmpresaForm, FinanceiroForm
 import logging
 
 logger = logging.getLogger(__name__)
@@ -23,94 +24,29 @@ def login_view(request):
             return render(request, 'core/login.html', {'error': 'Usuário ou senha inválidos'})
     return render(request, 'core/login.html')
 
+
 @login_required
 def pagina_inicial(request):
-    quartos = Quarto.objects.select_related('hospede', 'checkin').all()
+    quartos = Quarto.objects.select_related('hospede', 'checkin_individual', 'checkin_empresa').all()
     for quarto in quartos:
         hospede = quarto.hospede.nome_completo if quarto.hospede else "None"
-        data_checkin = quarto.checkin.data_checkin if quarto.checkin else "None"
-        data_checkout = quarto.checkin.data_checkout if quarto.checkin else "None"
-        print(f'Quarto {quarto.numero_quarto} - Hóspede: {hospede} - Check-in: {data_checkin} - Check-out: {data_checkout}')
+        data_checkin = "None"
+        data_checkout = "None"
+
+        if quarto.checkin_individual:
+            data_checkin = quarto.checkin_individual.data_checkin
+            data_checkout = quarto.checkin_individual.data_checkout
+        elif quarto.checkin_empresa:
+            data_checkin = quarto.checkin_empresa.data_checkin
+            data_checkout = quarto.checkin_empresa.data_checkout
+
+        print(
+            f'Quarto {quarto.numero_quarto} - Hóspede: {hospede} - Check-in: {data_checkin} - Check-out: {data_checkout}')
+
     context = {
         'quartos': quartos
     }
     return render(request, 'core/pagina_inicial.html', context)
-
-
-
-
-
-@login_required
-def checkin_view(request):
-    hospedes = Hospede.objects.filter(tipo_cliente='individual')
-    empresas = Empresa.objects.all()
-    quartos_livres = Quarto.objects.filter(estado='livre')  # Filtra apenas quartos livres
-
-    if request.method == 'POST':
-        form = CheckinForm(request.POST)
-        tipo_hospede = request.POST.get('tipo_hospede')
-
-        if form.is_valid():
-            checkin = form.save(commit=False)
-
-            if tipo_hospede == 'individual':
-                hospede_id = request.POST.get('selected_hospede_id')
-                if not hospede_id:
-                    form.add_error('selected_hospede_id', 'Selecione um hóspede principal')
-                else:
-                    hospede_principal = get_object_or_404(Hospede, id=hospede_id)
-                    checkin.hospede_principal = hospede_principal
-
-                    hospedes_secundarios = request.POST.getlist('hospede_secundario')
-                    checkin.save()
-                    checkin.hospedes_secundarios.set(hospedes_secundarios)
-
-            elif tipo_hospede == 'empresa':
-                empresa_id = request.POST.get('selected_empresa_id')
-                if not empresa_id:
-                    form.add_error('selected_empresa_id', 'Selecione uma empresa')
-                else:
-                    empresa = get_object_or_404(Empresa, id=empresa_id)
-                    checkin.empresa = empresa
-
-                    hospedes_empresariais = request.POST.getlist('hospede_empresa')
-                    checkin.save()
-                    checkin.hospedes_secundarios.set(hospedes_empresariais)
-
-            acompanhantes = form.cleaned_data['acompanhantes']
-            checkin.acompanhantes = acompanhantes
-
-            quarto_id = form.cleaned_data['quarto'].id
-            quarto = get_object_or_404(Quarto, id=quarto_id)
-
-            checkin.save()
-            quarto.estado = 'ocupado'
-            quarto.checkin = checkin  # Associa o check-in ao quarto
-            quarto.hospede = checkin.hospede_principal  # Atualiza o hóspede do quarto
-            quarto.save()
-            return redirect('pagina_inicial')
-    else:
-        form = CheckinForm()
-
-    return render(request, 'core/checkin.html',
-                  {'form': form, 'hospedes': hospedes, 'empresas': empresas, 'quartos': quartos_livres})
-
-
-@login_required
-def search_hospede(request):
-    query = request.GET.get('q')
-    hospedes = Hospede.objects.filter(nome_completo__icontains=query) | Hospede.objects.filter(cpf__icontains=query)
-    results = [{'id': hospede.id, 'nome_completo': hospede.nome_completo, 'cpf': hospede.cpf} for hospede in hospedes]
-    return JsonResponse(results, safe=False)
-
-
-
-@login_required
-def search_empresa(request):
-    query = request.GET.get('q')
-    empresas = Empresa.objects.filter(nome_empresa__icontains=query) | Empresa.objects.filter(cnpj__icontains=query)
-    results = [{'id': empresa.id, 'nome_empresa': empresa.nome_empresa, 'cnpj': empresa.cnpj} for empresa in empresas]
-    return JsonResponse(results, safe=False)
 
 
 @login_required
@@ -188,26 +124,117 @@ def excluir_empresa_view(request, pk):
         return redirect('gerenciar_empresas_view')
     return render(request, 'core/excluir_empresa_confirm.html', {'empresa': empresa})
 
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import Quarto, Hospede, CheckinIndividual, CheckinEmpresa, Empresa, Checkout, Financeira, Reserva
+from django.contrib.auth.decorators import login_required, permission_required
+from .forms import CheckinIndividualForm, CheckinEmpresaForm, HospedeForm, EmpresaForm, FinanceiroForm
+from django.http import JsonResponse
 
+@login_required
+def checkin_view(request):
+    hospedes = Hospede.objects.all()
+    empresas = Empresa.objects.all()
+    quartos_livres = Quarto.objects.filter(estado='livre')
+
+    if request.method == 'POST':
+        tipo_hospede = request.POST.get('tipo_hospede')
+        form_individual = None
+        form_empresa = None
+        if tipo_hospede == 'individual':
+            form_individual = CheckinIndividualForm(request.POST)
+            if form_individual.is_valid():
+                checkin = form_individual.save(commit=False)
+                hospede_id = request.POST.get('selected_hospede_id')
+                if hospede_id:
+                    hospede_principal = get_object_or_404(Hospede, id=hospede_id)
+                    checkin.hospede_principal = hospede_principal
+                    checkin.save()
+                    hospedes_secundarios = form_individual.cleaned_data['hospedes_secundarios']
+                    checkin.hospedes_secundarios.set(hospedes_secundarios)
+                    quarto = checkin.quarto
+                    quarto.estado = 'ocupado'
+                    quarto.checkin_individual = checkin
+                    quarto.hospede = hospede_principal
+                    quarto.tipo_checkin = 'individual'
+                    quarto.save()
+                    return redirect('pagina_inicial')
+                else:
+                    form_individual.add_error(None, 'Selecione um hóspede principal')
+        elif tipo_hospede == 'empresa':
+            form_empresa = CheckinEmpresaForm(request.POST)
+            if form_empresa.is_valid():
+                checkin = form_empresa.save(commit=False)
+                empresa_id = request.POST.get('selected_empresa_id')
+                hospede_id = request.POST.get('selected_hospede_empresa_id')
+                if empresa_id and hospede_id:
+                    empresa = get_object_or_404(Empresa, id=empresa_id)
+                    hospede_principal = get_object_or_404(Hospede, id=hospede_id)
+                    checkin.empresa = empresa
+                    checkin.hospede_principal = hospede_principal
+                    checkin.save()
+                    hospedes_secundarios = form_empresa.cleaned_data['hospedes_secundarios']
+                    checkin.hospedes_secundarios.set(hospedes_secundarios)
+                    quarto = checkin.quarto
+                    quarto.estado = 'ocupado'
+                    quarto.checkin_empresa = checkin
+                    quarto.hospede = hospede_principal
+                    quarto.tipo_checkin = 'empresa'
+                    quarto.save()
+                    return redirect('pagina_inicial')
+                else:
+                    form_empresa.add_error(None, 'Selecione uma empresa e um hóspede principal para a empresa')
+    else:
+        form_individual = CheckinIndividualForm()
+        form_empresa = CheckinEmpresaForm()
+
+    return render(request, 'core/checkin.html', {
+        'form_individual': form_individual,
+        'form_empresa': form_empresa,
+        'hospedes': hospedes,
+        'empresas': empresas,
+        'quartos': quartos_livres
+    })
+
+@login_required
+def search_hospede(request):
+    query = request.GET.get('q', '')
+    hospedes = Hospede.objects.filter(nome_completo__icontains=query)
+    results = [{'id': hospede.id, 'nome_completo': hospede.nome_completo, 'cpf': hospede.cpf} for hospede in hospedes]
+    return JsonResponse(results, safe=False)
+
+@login_required
+def search_empresa(request):
+    query = request.GET.get('q', '')
+    empresas = Empresa.objects.filter(nome_empresa__icontains=query)
+    results = [{'id': empresa.id, 'nome_empresa': empresa.nome_empresa, 'cnpj': empresa.cnpj} for empresa in empresas]
+    return JsonResponse(results, safe=False)
 
 
 
 @login_required
 def checkout_view(request):
-    checkins_ativos = Checkin.objects.filter(quarto__estado='ocupado').exclude(id__in=Checkout.objects.values('checkin_id'))
+    checkins_individuais_ativos = CheckinIndividual.objects.filter(quarto__estado='ocupado').exclude(
+        id__in=Checkout.objects.values('checkin_individual_id'))
+    checkins_empresas_ativos = CheckinEmpresa.objects.filter(quarto__estado='ocupado').exclude(
+        id__in=Checkout.objects.values('checkin_empresa_id'))
 
     if request.method == 'POST':
-        checkin_id = request.POST['checkin_id']
+        checkin_tipo = request.POST.get('checkin_tipo')
+        checkin_id = request.POST.get('checkin_id')
         consumo = request.POST['consumo']
         observacoes = request.POST['observacoes']
         metodo_pagamento = request.POST['metodo_pagamento']
         total_pago = request.POST['total_pago']
         data_checkout = request.POST['data_checkout']
 
-        checkin = get_object_or_404(Checkin, id=checkin_id)
+        if checkin_tipo == 'individual':
+            checkin = get_object_or_404(CheckinIndividual, id=checkin_id)
+        elif checkin_tipo == 'empresa':
+            checkin = get_object_or_404(CheckinEmpresa, id=checkin_id)
 
         checkout = Checkout.objects.create(
-            checkin=checkin,
+            checkin_individual=checkin if checkin_tipo == 'individual' else None,
+            checkin_empresa=checkin if checkin_tipo == 'empresa' else None,
             data_checkout=data_checkout,
             consumo=consumo,
             observacoes=observacoes,
@@ -228,7 +255,9 @@ def checkout_view(request):
 
         return redirect('pagina_inicial')
 
-    return render(request, 'core/checkout.html', {'checkins': checkins_ativos})
+    return render(request, 'core/checkout.html',
+                  {'checkins_individuais': checkins_individuais_ativos, 'checkins_empresas': checkins_empresas_ativos})
+
 
 @login_required
 def reserva_view(request):
@@ -281,6 +310,8 @@ def quarto_detalhes(request, id):
         'reservas': reservas
     }
     return render(request, 'core/quarto_detalhes.html', context)
+
+
 @login_required
 @permission_required('core.view_financeira', raise_exception=True)
 def financeiro_view(request):
@@ -306,7 +337,14 @@ def financeiro_view(request):
 
 
 def get_checkin_details(request, checkin_id):
-    checkin = get_object_or_404(Checkin, id=checkin_id)
+    checkin_tipo = request.GET.get('checkin_tipo')
+    if checkin_tipo == 'individual':
+        checkin = get_object_or_404(CheckinIndividual, id=checkin_id)
+    elif checkin_tipo == 'empresa':
+        checkin = get_object_or_404(CheckinEmpresa, id=checkin_id)
+    else:
+        return JsonResponse({'error': 'Tipo de check-in inválido'}, status=400)
+
     hospede = checkin.hospede_principal
     data = {
         'checkin': {
@@ -329,4 +367,5 @@ def get_checkin_details(request, checkin_id):
         }
     }
     return JsonResponse(data)
+
 

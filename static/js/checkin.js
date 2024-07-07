@@ -7,7 +7,6 @@ function toggleHospedeFields() {
 function searchHospede() {
     const query = document.getElementById('search_hospede').value.trim();
 
-    // Se o campo de pesquisa estiver vazio, limpa os resultados e retorna.
     if (query === "") {
         document.getElementById('search_results').innerHTML = '';
         return;
@@ -31,8 +30,8 @@ function selectHospede(id, nome_completo) {
     document.getElementById('search_hospede').value = nome_completo;
     document.getElementById('selected_hospede_id').value = id;
     const results = document.getElementById('search_results');
-    Array.from(results.children).forEach(child => child.classList.remove('selected'));  // Remove a classe de todos os itens
-    event.target.classList.add('selected');  // Adiciona a classe ao item clicado
+    Array.from(results.children).forEach(child => child.classList.remove('selected'));
+    event.target.classList.add('selected');
     results.innerHTML = '';
 }
 
@@ -48,7 +47,6 @@ function confirmHospedeSelection() {
 function searchEmpresa() {
     const query = document.getElementById('search_empresa').value.trim();
 
-    // Se o campo de pesquisa estiver vazio, limpa os resultados e retorna.
     if (query === "") {
         document.getElementById('search_empresa_results').innerHTML = '';
         return;
@@ -83,6 +81,43 @@ function confirmEmpresaSelection() {
     }
 }
 
+function searchHospedeEmpresa(input) {
+    const query = input.value.trim();
+
+    if (query === "") {
+        input.nextElementSibling.innerHTML = '';
+        return;
+    }
+
+    fetch(`/search_hospede/?q=${query}`)
+        .then(response => response.json())
+        .then(data => {
+            const results = input.nextElementSibling;
+            results.innerHTML = '';
+            data.forEach(hospede => {
+                const li = document.createElement('li');
+                li.textContent = `${hospede.nome_completo} - ${hospede.cpf}`;
+                li.onclick = () => selectHospedeEmpresa(hospede.id, hospede.nome_completo, input);
+                results.appendChild(li);
+            });
+        });
+}
+
+function selectHospedeEmpresa(id, nome_completo, input) {
+    input.value = nome_completo;
+    input.nextElementSibling.nextElementSibling.value = id;
+    input.nextElementSibling.innerHTML = '';
+}
+
+function confirmHospedeEmpresaSelection(button) {
+    const selectedHospedeEmpresaId = button.previousElementSibling.value;
+    if (selectedHospedeEmpresaId) {
+        alert("Hóspede da empresa selecionado com sucesso!");
+    } else {
+        alert("Por favor, selecione um hóspede da empresa.");
+    }
+}
+
 function addIndividualHospedeField() {
     const hospedeFields = document.getElementById('individual_hospede_fields');
     const newField = document.createElement('div');
@@ -102,11 +137,10 @@ function addEmpresaHospedeField() {
     const newField = document.createElement('div');
     newField.innerHTML = `
         <label for="hospede_empresa">Hóspede da Empresa:</label>
-        <select name="hospede_empresa">
-            {% for hospede in hospedes %}
-                <option value="{{ hospede.id }}">{{ hospede.nome_completo }}</option>
-            {% endfor %}
-        </select>
+        <input type="text" class="search_hospede_empresa" name="search_hospede_empresa" oninput="searchHospedeEmpresa(this)">
+        <ul class="search_empresa_results"></ul>
+        <input type="hidden" class="selected_hospede_empresa_id" name="selected_hospede_empresa_id">
+        <button type="button" onclick="confirmHospedeEmpresaSelection(this)">Confirmar Hóspede da Empresa</button>
     `;
     hospedeFields.appendChild(newField);
 }
