@@ -291,12 +291,13 @@ def reserva_view(request):
             data_inicio=data_inicio,
             data_fim=data_fim
         )
-        return redirect('pagina_inicial')
+
+        messages.success(request, 'Reserva realizada com sucesso.')
+        return redirect('reserva')
 
     hospedes = Hospede.objects.all()
     quartos = Quarto.objects.all()
     return render(request, 'core/reserva.html', {'hospedes': hospedes, 'quartos': quartos})
-
 
 @login_required
 @permission_required('core.view_financeira', raise_exception=True)

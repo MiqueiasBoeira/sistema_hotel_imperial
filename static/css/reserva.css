@@ -1,0 +1,85 @@
+/* reserva.css */
+
+/* Container principal do formulário de reserva */
+.reserva-container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Título do formulário de reserva */
+.reserva-container h1 {
+    color: #D4AF37; /* Dourado */
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 2em;
+}
+
+/* Formulário de reserva */
+.reserva-container form {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Labels dos campos do formulário */
+.reserva-container label {
+    margin: 10px 0 5px;
+    font-weight: bold;
+}
+
+/* Inputs, selects e textareas */
+.reserva-container input[type="text"],
+.reserva-container input[type="date"],
+.reserva-container select,
+.reserva-container textarea {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    width: 100%; /* Certifique-se de que todos os elementos tenham 100% da largura */
+    box-sizing: border-box; /* Inclui o padding e a borda na largura total */
+    font-size: 1em;
+}
+
+/* Botões */
+.reserva-container button,
+.reserva-container a.btn {
+    padding: 10px 20px;
+    background-color: #D4AF37; /* Dourado */
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+    margin-bottom: 15px; /* Adiciona espaçamento inferior */
+    font-size: 1em;
+    text-align: center;
+    text-decoration: none;
+}
+
+/* Hover para botões */
+.reserva-container button:hover,
+.reserva-container a.btn:hover {
+    background-color: #b88f2a; /* Dourado mais escuro */
+}
+
+/* Flexbox para alinhamento dos campos */
+.flex-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 15px; /* Adiciona espaçamento entre os itens */
+}
+
+.flex-item {
+    flex: 1 1 calc(50% - 15px); /* Permite que os itens cresçam e adiciona espaçamento entre eles */
+    margin-bottom: 15px; /* Espaçamento vertical */
+}
+
+.flex-item-full {
+    flex: 1 1 100%; /* Faz o item ocupar 100% da largura disponível */
+    margin-bottom: 15px; /* Espaçamento vertical */
+}

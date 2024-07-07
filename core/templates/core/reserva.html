@@ -1,46 +1,71 @@
 {% extends 'core/base.html' %}
+{% load static %}
 
 {% block title %}Reserva{% endblock %}
 
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/reserva.css' %}">
+{% endblock %}
+
 {% block content %}
-<h1>Registro de Reserva</h1>
-{% if messages %}
-    {% for message in messages %}
-        <p class="{{ message.tags }}">{{ message }}</p>
-    {% endfor %}
-{% endif %}
-<form method="post" action="{% url 'reserva' %}">
-    {% csrf_token %}
-    <label for="quarto">Quarto:</label>
-    <select id="quarto" name="quarto_id" required>
-        {% for quarto in quartos %}
-            <option value="{{ quarto.id }}">{{ quarto.numero_quarto }}</option>
+<div class="reserva-container">
+    <h1>Registro de Reserva</h1>
+    {% if messages %}
+        {% for message in messages %}
+            <p class="{{ message.tags }}">{{ message }}</p>
         {% endfor %}
-    </select>
+    {% endif %}
+    <form method="post" action="{% url 'reserva' %}">
+        {% csrf_token %}
+        <div class="flex-container">
+            <div class="flex-item">
+                <label for="quarto">Quarto:</label>
+                <select id="quarto" name="quarto_id" required>
+                    {% for quarto in quartos %}
+                        <option value="{{ quarto.id }}">{{ quarto.numero_quarto }}</option>
+                    {% endfor %}
+                </select>
+            </div>
 
-    <label for="data_inicio">Data de Início:</label>
-    <input type="date" id="data_inicio" name="data_inicio" required>
+            <div class="flex-item">
+                <label for="data_inicio">Data de Início:</label>
+                <input type="date" id="data_inicio" name="data_inicio" required>
+            </div>
 
-    <label for="data_fim">Data de Fim:</label>
-    <input type="date" id="data_fim" name="data_fim" required>
+            <div class="flex-item">
+                <label for="data_fim">Data de Fim:</label>
+                <input type="date" id="data_fim" name="data_fim" required>
+            </div>
+        </div>
 
-    <h3>Dados do Hóspede</h3>
-    <label for="hospede_existente">Hóspede Existente:</label>
-    <select id="hospede_existente" name="hospede_id">
-        <option value="">Selecione um hóspede existente (opcional)</option>
-        {% for hospede in hospedes %}
-            <option value="{{ hospede.id }}">{{ hospede.nome_completo }}</option>
-        {% endfor %}
-    </select>
+        <h3>Dados do Hóspede</h3>
+        <div class="flex-container">
+            <div class="flex-item-full">
+                <label for="hospede_existente">Hóspede Existente:</label>
+                <select id="hospede_existente" name="hospede_id">
+                    <option value="">Selecione um hóspede existente (opcional)</option>
+                    {% for hospede in hospedes %}
+                        <option value="{{ hospede.id }}">{{ hospede.nome_completo }}</option>
+                    {% endfor %}
+                </select>
+            </div>
 
-    <h4>Ou</h4>
+            <div class="flex-item-full">
+                <h4>Ou</h4>
+            </div>
 
-    <label for="nome_hospede">Nome do Hóspede:</label>
-    <input type="text" id="nome_hospede" name="nome_hospede">
+            <div class="flex-item">
+                <label for="nome_hospede">Nome do Hóspede:</label>
+                <input type="text" id="nome_hospede" name="nome_hospede">
+            </div>
 
-    <label for="contato_hospede">Contato do Hóspede:</label>
-    <input type="text" id="contato_hospede" name="contato_hospede">
+            <div class="flex-item">
+                <label for="contato_hospede">Contato do Hóspede:</label>
+                <input type="text" id="contato_hospede" name="contato_hospede">
+            </div>
+        </div>
 
-    <button type="submit">Reservar</button>
-</form>
+        <button type="submit">Reservar</button>
+    </form>
+</div>
 {% endblock %}
