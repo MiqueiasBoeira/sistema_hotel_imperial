@@ -1,0 +1,72 @@
+/* quarto_detalhes.css */
+
+/* Container principal dos detalhes do quarto */
+.quarto-detalhes-container {
+    max-width: 1000px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+}
+
+.quarto-detalhes-container h1 {
+    text-align: center;
+    color: #D4AF37; /* Dourado */
+    margin-bottom: 20px;
+}
+
+.detalhes-grid {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.hospede-atual, .reservas-ativas {
+    flex: 1;
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.hospede-atual h2, .reservas-ativas h2 {
+    color: #D4AF37;
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.hospede-detalhes p, .checkin-detalhes p, .reservas-ativas .reserva p {
+    margin: 8px 0;
+    font-size: 1em;
+}
+
+.hospede-detalhes p span, .checkin-detalhes p span, .reservas-ativas .reserva p span {
+    font-weight: bold;
+}
+
+/* Reservas */
+.reservas-ativas .reserva {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 10px;
+    margin-bottom: 15px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.reservas-ativas .reserva button {
+    padding: 10px 20px;
+    background-color: #D4AF37; /* Dourado */
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+    font-size: 1em;
+}
+
+.reservas-ativas .reserva button:hover {
+    background-color: #b88f2a; /* Dourado mais escuro */
+}

@@ -1,120 +1,64 @@
 {% extends 'core/base.html' %}
+{% load static %}
 
 {% block title %}Quarto {{ quarto.numero_quarto }}{% endblock %}
 
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/quarto_detalhes.css' %}">
+{% endblock %}
+
 {% block content %}
-<h1>Detalhes do Quarto {{ quarto.numero_quarto }}</h1>
+<div class="quarto-detalhes-container">
+    <h1>Detalhes do Quarto {{ quarto.numero_quarto }}</h1>
 
-{% if quarto.estado == 'ocupado' %}
-    <h2>Hóspede Atual</h2>
-    <div class="hospede-detalhes">
-        <p><strong>Nome:</strong>
-            {% if quarto.tipo_checkin == 'individual' %}
-                {{ quarto.checkin_individual.hospede_principal.nome_completo }}
+    <div class="detalhes-grid">
+        <div class="hospede-atual">
+            {% if quarto.estado == 'ocupado' %}
+                <h2>Hóspede Atual</h2>
+                <div class="hospede-detalhes">
+                    <p><span>Nome:</span> {% if quarto.tipo_checkin == 'individual' %}{{ quarto.checkin_individual.hospede_principal.nome_completo }}{% else %}{{ quarto.checkin_empresa.hospede_principal.nome_completo }}{% endif %}</p>
+                    <p><span>CPF:</span> {% if quarto.tipo_checkin == 'individual' %}{{ quarto.checkin_individual.hospede_principal.cpf }}{% else %}{{ quarto.checkin_empresa.hospede_principal.cpf }}{% endif %}</p>
+                    <p><span>E-mail:</span> {% if quarto.tipo_checkin == 'individual' %}{{ quarto.checkin_individual.hospede_principal.email }}{% else %}{{ quarto.checkin_empresa.hospede_principal.email }}{% endif %}</p>
+                    <p><span>Telefone:</span> {% if quarto.tipo_checkin == 'individual' %}{{ quarto.checkin_individual.hospede_principal.telefone }}{% else %}{{ quarto.checkin_empresa.hospede_principal.telefone }}{% endif %}</p>
+                    <p><span>Endereço:</span> {% if quarto.tipo_checkin == 'individual' %}{{ quarto.checkin_individual.hospede_principal.endereco }}{% else %}{{ quarto.checkin_empresa.hospede_principal.endereco }}{% endif %}</p>
+                    {% if quarto.tipo_checkin == 'empresa' %}
+                        <p><span>Empresa:</span> {{ quarto.checkin_empresa.empresa.nome_empresa }}</p>
+                    {% endif %}
+                </div>
+
+                <div class="checkin-detalhes">
+                    <h3>Check-in</h3>
+                    <p><span>Data de Check-in:</span> {% if quarto.checkin_individual %}{{ quarto.checkin_individual.data_checkin }}{% else %}{{ quarto.checkin_empresa.data_checkin }}{% endif %}</p>
+                    <p><span>Data de Check-out:</span> {% if quarto.checkin_individual %}{{ quarto.checkin_individual.data_checkout }}{% else %}{{ quarto.checkin_empresa.data_checkout }}{% endif %}</p>
+                    <p><span>Diária:</span> {% if quarto.checkin_individual %}{{ quarto.checkin_individual.diaria }}{% else %}{{ quarto.checkin_empresa.diaria }}{% endif %}</p>
+                    <p><span>Número de Dias:</span> {% if quarto.checkin_individual %}{{ quarto.checkin_individual.num_dias }}{% else %}{{ quarto.checkin_empresa.num_dias }}{% endif %}</p>
+                    <p><span>Companhia:</span> {% if quarto.checkin_individual %}{{ quarto.checkin_individual.companhia }}{% else %}{{ quarto.checkin_empresa.companhia }}{% endif %}</p>
+                    <p><span>Motivo da Viagem:</span> {% if quarto.checkin_individual %}{{ quarto.checkin_individual.motivo_viagem }}{% else %}{{ quarto.checkin_empresa.motivo_viagem }}{% endif %}</p>
+                    <p><span>Acompanhantes:</span> {% if quarto.checkin_individual %}{{ quarto.checkin_individual.acompanhantes }}{% else %}{{ quarto.checkin_empresa.acompanhantes }}{% endif %}</p>
+                </div>
             {% else %}
-                {{ quarto.checkin_empresa.hospede_principal.nome_completo }}
+                <p>O quarto está atualmente livre.</p>
             {% endif %}
-        </p>
-        <p><strong>CPF:</strong>
-            {% if quarto.tipo_checkin == 'individual' %}
-                {{ quarto.checkin_individual.hospede_principal.cpf }}
-            {% else %}
-                {{ quarto.checkin_empresa.hospede_principal.cpf }}
-            {% endif %}
-        </p>
-        <p><strong>E-mail:</strong>
-            {% if quarto.tipo_checkin == 'individual' %}
-                {{ quarto.checkin_individual.hospede_principal.email }}
-            {% else %}
-                {{ quarto.checkin_empresa.hospede_principal.email }}
-            {% endif %}
-        </p>
-        <p><strong>Telefone:</strong>
-            {% if quarto.tipo_checkin == 'individual' %}
-                {{ quarto.checkin_individual.hospede_principal.telefone }}
-            {% else %}
-                {{ quarto.checkin_empresa.hospede_principal.telefone }}
-            {% endif %}
-        </p>
-        <p><strong>Endereço:</strong>
-            {% if quarto.tipo_checkin == 'individual' %}
-                {{ quarto.checkin_individual.hospede_principal.endereco }}
-            {% else %}
-                {{ quarto.checkin_empresa.hospede_principal.endereco }}
-            {% endif %}
-        </p>
-        {% if quarto.tipo_checkin == 'empresa' %}
-            <p><strong>Empresa:</strong> {{ quarto.checkin_empresa.empresa.nome_empresa }}</p>
-        {% endif %}
-        <h3>Check-in</h3>
-        <p><strong>Data de Check-in:</strong>
-            {% if quarto.checkin_individual %}
-                {{ quarto.checkin_individual.data_checkin }}
-            {% else %}
-                {{ quarto.checkin_empresa.data_checkin }}
-            {% endif %}
-        </p>
-        <p><strong>Data de Check-out:</strong>
-            {% if quarto.checkin_individual %}
-                {{ quarto.checkin_individual.data_checkout }}
-            {% else %}
-                {{ quarto.checkin_empresa.data_checkout }}
-            {% endif %}
-        </p>
-        <p><strong>Diária:</strong>
-            {% if quarto.checkin_individual %}
-                {{ quarto.checkin_individual.diaria }}
-            {% else %}
-                {{ quarto.checkin_empresa.diaria }}
-            {% endif %}
-        </p>
-        <p><strong>Número de Dias:</strong>
-            {% if quarto.checkin_individual %}
-                {{ quarto.checkin_individual.num_dias }}
-            {% else %}
-                {{ quarto.checkin_empresa.num_dias }}
-            {% endif %}
-        </p>
-        <p><strong>Companhia:</strong>
-            {% if quarto.checkin_individual %}
-                {{ quarto.checkin_individual.companhia }}
-            {% else %}
-                {{ quarto.checkin_empresa.companhia }}
-            {% endif %}
-        </p>
-        <p><strong>Motivo da Viagem:</strong>
-            {% if quarto.checkin_individual %}
-                {{ quarto.checkin_individual.motivo_viagem }}
-            {% else %}
-                {{ quarto.checkin_empresa.motivo_viagem }}
-            {% endif %}
-        </p>
-        <p><strong>Acompanhantes:</strong>
-            {% if quarto.checkin_individual %}
-                {{ quarto.checkin_individual.acompanhantes }}
-            {% else %}
-                {{ quarto.checkin_empresa.acompanhantes }}
-            {% endif %}
-        </p>
+        </div>
+
+        <div class="reservas-ativas">
+            <h2>Reservas Ativas</h2>
+            {% for reserva in reservas %}
+            <div class="reserva">
+                <p><span>Hóspede:</span> {% if reserva.hospede %}{{ reserva.hospede.nome_completo }}{% else %}{{ reserva.nome_hospede }}{% endif %}</p>
+                <p><span>Contato:</span> {% if reserva.hospede %}{{ reserva.hospede.telefone }}{% else %}{{ reserva.contato_hospede }}{% endif %}</p>
+                <p><span>Data de Início:</span> {{ reserva.data_inicio }}</p>
+                <p><span>Data de Fim:</span> {{ reserva.data_fim }}</p>
+                <form method="post" action="{% url 'quarto_detalhes' quarto.id %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="reserva_id" value="{{ reserva.id }}">
+                    <button type="submit" name="cancelar_reserva">Cancelar Reserva</button>
+                </form>
+            </div>
+            {% empty %}
+            <p>Não há reservas para este quarto.</p>
+            {% endfor %}
+        </div>
     </div>
-{% else %}
-    <p>O quarto está atualmente livre.</p>
-{% endif %}
-
-<h2>Reservas Ativas</h2>
-{% for reserva in reservas %}
-<div class="reserva">
-    <p>Hóspede: {% if reserva.hospede %}{{ reserva.hospede.nome_completo }}{% else %}{{ reserva.nome_hospede }}{% endif %}</p>
-    <p>Contato: {% if reserva.hospede %}{{ reserva.hospede.telefone }}{% else %}{{ reserva.contato_hospede }}{% endif %}</p>
-    <p>Data de Início: {{ reserva.data_inicio }}</p>
-    <p>Data de Fim: {{ reserva.data_fim }}</p>
-    <form method="post" action="{% url 'quarto_detalhes' quarto.id %}">
-        {% csrf_token %}
-        <input type="hidden" name="reserva_id" value="{{ reserva.id }}">
-        <button type="submit" name="cancelar_reserva">Cancelar Reserva</button>
-    </form>
 </div>
-{% empty %}
-<p>Não há reservas para este quarto.</p>
-{% endfor %}
 {% endblock %}
