@@ -9,20 +9,22 @@
     {% block extra_head %}{% endblock %}
 </head>
 <body>
-    <header class="header">
-        <img src="{% static 'images/logo.png' %}" alt="Hotel Imperial Logo">
-        <nav>
-            <a href="{% url 'pagina_inicial' %}">Página Inicial</a>
-            <a href="{% url 'checkin' %}">Check-in</a>
-            <a href="{% url 'checkout' %}">Check-out</a>
-            <a href="{% url 'reserva' %}">Reservas</a>
-            <a href="{% url 'financeiro' %}">Finanças</a>
-            <a href="#" onclick="document.getElementById('logout-form').submit();">Logout</a>
-            <form id="logout-form" method="post" action="{% url 'logout' %}" style="display: none;">
-                {% csrf_token %}
-            </form>
-        </nav>
-    </header>
+    <div class="header-container">
+        <header class="header">
+            <img src="{% static 'images/logo.png' %}" alt="Hotel Imperial Logo">
+            <nav>
+                <a href="{% url 'pagina_inicial' %}">Página Inicial</a>
+                <a href="{% url 'checkin' %}">Check-in</a>
+                <a href="{% url 'checkout' %}">Check-out</a>
+                <a href="{% url 'reserva' %}">Reservas</a>
+                <a href="{% url 'financeiro' %}">Finanças</a>
+                <a href="#" onclick="document.getElementById('logout-form').submit();">Logout</a>
+                <form id="logout-form" method="post" action="{% url 'logout' %}" style="display: none;">
+                    {% csrf_token %}
+                </form>
+            </nav>
+        </header>
+    </div>
     <div class="main-container">
         {% block content %}
         {% endblock %}
