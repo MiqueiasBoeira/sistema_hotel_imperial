@@ -1,3 +1,5 @@
+/* styles.css */
+
 body {
     font-family: 'Roboto', Arial, sans-serif;
     background: #F5F5DC; /* Bege claro */
@@ -23,20 +25,28 @@ body {
     color: #fff;
     margin: 0 15px;
     text-decoration: none;
+    padding: 10px 20px; /* Adicionado para garantir padding uniforme */
+    display: inline-block;
 }
 .header nav a:hover {
     text-decoration: underline;
 }
+
+/* Garantir que o link de logout seja estilizado corretamente */
+.header nav a[onclick] {
+    cursor: pointer;
+}
+
 .main-container {
     padding: 20px;
     background: #FFFFFF; /* Branco */
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+
 @media (max-width: 768px) {
     .header nav a {
         margin: 0 10px;
-
     }
     .room-cards-container {
         flex-direction: column;

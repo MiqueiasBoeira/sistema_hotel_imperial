@@ -7,7 +7,6 @@
     <title>{% block title %}Hotel Imperial{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'css/styles.css'%}">
     {% block extra_head %}{% endblock %}
-
 </head>
 <body>
     <header class="header">
@@ -18,9 +17,9 @@
             <a href="{% url 'checkout' %}">Check-out</a>
             <a href="{% url 'reserva' %}">Reservas</a>
             <a href="{% url 'financeiro' %}">Finanças</a>
-            <form method="post" action="{% url 'logout' %}" style="display: inline;">
+            <a href="#" onclick="document.getElementById('logout-form').submit();">Logout</a>
+            <form id="logout-form" method="post" action="{% url 'logout' %}" style="display: none;">
                 {% csrf_token %}
-                <button type="submit" style="background: none; border: none; color: #fff; cursor: pointer; text-decoration: underline; margin: 0; padding: 0;">Logout</button>
             </form>
         </nav>
     </header>
