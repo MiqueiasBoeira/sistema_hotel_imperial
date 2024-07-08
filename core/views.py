@@ -1,9 +1,11 @@
 import logging
+import locale
 from django.http import JsonResponse
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import render, redirect, get_object_or_404
+from django.utils.dateformat import format as date_format
 from .models import Quarto, Hospede, CheckinIndividual, CheckinEmpresa, Empresa, Checkout, Financeira, Reserva
 from .forms import CheckinIndividualForm, CheckinEmpresaForm, HospedeForm, EmpresaForm, FinanceiroForm, CheckoutForm
 
@@ -299,28 +301,57 @@ def reserva_view(request):
     quartos = Quarto.objects.all()
     return render(request, 'core/reserva.html', {'hospedes': hospedes, 'quartos': quartos})
 
+
+# Defina a localidade para exibir os valores corretamente
+locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
 @login_required
 @permission_required('core.view_financeira', raise_exception=True)
 def financeiro_view(request):
     form = FinanceiroForm()
-    lancamentos = Financeira.objects.all()
+    lancamentos = Financeira.objects.none()
+    saldo = None
 
-    if request.method == 'POST' and 'tipo' in request.POST:
-        # Lógica para adicionar uma nova transação
+    if request.method == 'POST' and 'calcular_saldo' in request.POST:
+        form = FinanceiroForm(request.POST)
+        if form.is_valid():
+            data_inicial = form.cleaned_data['data_inicial']
+            data_final = form.cleaned_data['data_final']
+            if data_inicial and data_final:
+                lancamentos = Financeira.objects.filter(data__range=[data_inicial, data_final])
+            else:
+                lancamentos = Financeira.objects.all()
+            saldo = calcular_saldo(lancamentos)
+
+    elif request.method == 'POST' and 'tipo' in request.POST:
         tipo = request.POST['tipo']
         descricao = request.POST['descricao']
         valor = request.POST['valor']
         data = request.POST['data']
         Financeira.objects.create(tipo=tipo, descricao=descricao, valor=valor, data=data)
-    elif request.method == 'POST' and 'data_inicial' in request.POST:
-        # Lógica para filtrar os lançamentos financeiros
-        form = FinanceiroForm(request.POST)
-        if form.is_valid():
-            data_inicial = form.cleaned_data['data_inicial']
-            data_final = form.cleaned_data['data_final']
-            lancamentos = Financeira.objects.filter(data__range=[data_inicial, data_final])
+        return redirect('financeiro')
 
-    return render(request, 'core/financas.html', {'form': form, 'lancamentos': lancamentos})
+    # Formatar os valores monetários e datas
+    lancamentos_formatados = []
+    for lancamento in lancamentos:
+        lancamentos_formatados.append({
+            'data': date_format(lancamento.data, 'd/m/Y'),
+            'tipo': lancamento.tipo,
+            'descricao': lancamento.descricao,
+            'valor': f"R$ {lancamento.valor:,.2f}".replace('.', ',')
+        })
+
+    saldo_formatado = f"R$ {saldo:,.2f}".replace('.', ',') if saldo is not None else None
+
+    return render(request, 'core/financas.html', {'form': form, 'lancamentos': lancamentos_formatados, 'saldo': saldo_formatado})
+
+def calcular_saldo(lancamentos):
+    saldo = 0
+    for lancamento in lancamentos:
+        if lancamento.tipo == 'receita':
+            saldo += lancamento.valor
+        else:
+            saldo -= lancamento.valor
+    return saldo
 
 
 def get_checkin_details(request, checkin_id):
