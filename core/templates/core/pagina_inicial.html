@@ -12,10 +12,7 @@
     <div class="room-cards-container">
         {% for quarto in quartos %}
         <a href="{% url 'quarto_detalhes' quarto.id %}" class="room-card-link">
-        <div class="room-card {% if quarto.estado == 'livre' %}available
-                              {% else %}occupied
-                              {% endif %}">
-
+        <div class="room-card {% if quarto.estado == 'livre' %}available{% else %}occupied{% endif %}">
             <h2 class="room-title">Quarto {{ quarto.numero_quarto }}</h2>
             <p class="room-status">Estado: {{ quarto.estado }}</p>
 
@@ -30,23 +27,24 @@
                 {% if quarto.tipo_checkin == 'empresa' %}
                     <p class="room-company">Empresa: {{ quarto.checkin_empresa.empresa.nome_empresa }}</p>
                 {% endif %}
-                <p class="room-dates">
-                    Check-in:
-                    {% if quarto.checkin_individual %}
-                        {{ quarto.checkin_individual.data_checkin }}
-                    {% else %}
-                        {{ quarto.checkin_empresa.data_checkin }}
-                    {% endif %}
-                    |
-                    Check-out:
-                    {% if quarto.checkin_individual %}
-                        {{ quarto.checkin_individual.data_checkout }}
-                    {% else %}
-                        {{ quarto.checkin_empresa.data_checkout }}
-                    {% endif %}
-                </p>
-            {% endif %}
+                <div class="room-dates">
+                    <p>Check-in:
+                        {% if quarto.checkin_individual %}
+                            {{ quarto.checkin_individual.data_checkin|date:"d/m/Y" }}
+                        {% else %}
+                            {{ quarto.checkin_empresa.data_checkin|date:"d/m/Y" }}
+                        {% endif %}
+                    </p>
+                    <p>Check-out:
+                        {% if quarto.checkin_individual %}
+                            {{ quarto.checkin_individual.data_checkout|date:"d/m/Y" }}
+                        {% else %}
+                            {{ quarto.checkin_empresa.data_checkout|date:"d/m/Y" }}
+                        {% endif %}
+                    </p>
+                </div>
 
+            {% endif %}
         </div>
         {% endfor %}
     </div>

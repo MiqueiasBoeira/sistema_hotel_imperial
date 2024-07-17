@@ -6,13 +6,17 @@
 }
 
 .room-card {
-    background-color: #FFFFFF; /* Branco */
+background-color: #FFFFFF; /* Branco */
     border: 1px solid #D4AF37; /* Dourado */
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     margin: 10px;
     padding: 15px;
     width: 250px;
+    height: 250px; /* Tamanho fixo */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     transition: transform 0.2s, box-shadow 0.2s;
 }
 
@@ -48,4 +52,8 @@
 .room-cards-container .room-card-link {
     text-decoration: none   ; /* Use !important para forçar a aplicação */
     color: inherit;
+}
+
+.room-dates p {
+    margin: 0; /* Para separar as datas em linhas diferentes */
 }
